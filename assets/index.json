@@ -1,0 +1,27 @@
+{
+
+    "bitmapPath": "assets/bitmaps/",
+    "bitmaps": [
+
+        {"name": "tileset1", "path": "tileset1.png"},
+        {"name": "font", "path": "font.png"}
+    ],
+
+    "samplePath": "assets/audio/",
+    "samples": [
+   
+    ],
+
+    "tilemapPath": "assets/tilemaps/",
+    "tilemaps": [
+
+        {"name": "level1", "path": "level1.tmx"},
+        {"name": "collisions1", "path": "collisions1.tmx"}
+    ],
+
+    "documentPath": "assets/localization/",
+    "documents": [
+        {"name": "en-us", "path": "en-us.json"}
+    ]
+}
+
