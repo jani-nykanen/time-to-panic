@@ -1,5 +1,5 @@
 import { Assets, ProgramEvent } from "../core/interface.js";
-import { Canvas } from "../gfx/interface.js";
+import { Canvas, Effect } from "../gfx/interface.js";
 import { Tilemap } from "../tilemap/tilemap.js";
 import { Camera } from "./camera.js";
 import { CollisionObject } from "./collisionobject.js";
@@ -51,6 +51,18 @@ export class Stage {
 
     public draw(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
+        // Shadow layer
+        canvas.toggleShadowRendering(true);
+        canvas.clearShadowBuffer();
+
+        canvas.applyEffect(Effect.FixedColor);
+        this.renderLayer.draw(canvas, camera, assets, true, 2, 2, 0.25);
+        
+        canvas.toggleShadowRendering(false);
+        canvas.applyEffect(Effect.None);
+        canvas.setColor();
+
+        // Base layer
         this.renderLayer.draw(canvas, camera, assets);
     }
 
@@ -59,7 +71,7 @@ export class Stage {
 
         this.collisionLayer.objectCollision(o, event);
 
-        o.horizontalCollision(0, 0, camera.height, -1, event);
-        o.horizontalCollision(camera.width, 0, camera.height, 1, event);
+        // o.horizontalCollision(0, 0, camera.height, -1, event);
+        // o.horizontalCollision(camera.width, 0, camera.height, 1, event);
     }
 }

@@ -9,11 +9,16 @@ import { DustParticle } from "./dustparticle.js";
 import { Rectangle } from "../common/rectangle.js";
 
 
+const RUN_TARGET_SPEED : number = 2.0;
+const BASE_GRAVITY : number = 4.0;
+
 
 export class Player extends CollisionObject {
 
 
     private sprite : AnimatedSprite;
+    private flip : Flip = Flip.None;
+    private direction : number = 1;
 
     private dustGenerator : ObjectGenerator<DustParticle>;
     private dustTimer : number = 0;
@@ -30,11 +35,14 @@ export class Player extends CollisionObject {
         this.friction.x = 0.15;
         this.friction.y = 0.15;
 
-        this.sprite = new AnimatedSprite(16, 16);
+        this.sprite = new AnimatedSprite(24, 24);
 
         this.dustGenerator = new ObjectGenerator<DustParticle> (DustParticle);
 
-        this.collisionBox = new Rectangle(0, 2, 8, 12);
+        this.collisionBox = new Rectangle(0, 1, 6, 14);
+
+        this.inCamera = true;
+        this.cameraCheckArea = new Vector(256, 256);
     }
 
 
@@ -61,12 +69,14 @@ export class Player extends CollisionObject {
 
     private controlBaseMovement(event : ProgramEvent) : void {
 
-        const BASE_SPEED : number = 1.0;
-        const BASE_GRAVITY : number = 4.0;
-
         const stick : Vector = event.input.stick;
+        if (Math.abs(stick.x) > 0.01) {
 
-        this.speedTarget.x = stick.x*BASE_SPEED;
+            this.direction = Math.sign(stick.x);
+            this.flip = this.direction == 1 ? Flip.None : Flip.Horizontal;
+        }
+
+        this.speedTarget.x = stick.x*RUN_TARGET_SPEED;
         this.speedTarget.y = BASE_GRAVITY;
     }
 
@@ -75,6 +85,44 @@ export class Player extends CollisionObject {
 
         this.controlBaseMovement(event);
         this.controlJumping(event);
+    }
+
+
+    private determineFriction() : void {
+
+        const BASE_FRICTION : number = 0.10;
+        const AIR_FRICTION : number = 0.05;
+
+        if (!this.touchGround) {
+
+            this.friction.x = AIR_FRICTION;
+            return;
+        }
+
+        if (this.direction != Math.sign(this.speed.x) ||
+            Math.abs(this.speedTarget.x) < 0.01) {
+
+            this.friction.x = BASE_FRICTION;
+            return;
+        }
+
+        const t : number = Math.abs(this.speed.x/2.0);
+        this.friction.x = BASE_FRICTION*(1.0 - Math.sqrt(t)*0.90);
+    }
+
+
+    private determineBounceFactor() : void {
+
+        const THRESHOLD : number = 1.0;
+        const BASE_FACTOR = 0.90;
+
+        if (Math.abs(this.speed.x) < THRESHOLD) {
+
+            this.bounceFactor.x = 0.0;
+            return;
+        }
+
+        this.bounceFactor.x = (Math.abs(this.speed.x) - 1.0)*BASE_FACTOR;
     }
 
 
@@ -90,9 +138,45 @@ export class Player extends CollisionObject {
     }
 
 
+    private animateRunning(event : ProgramEvent) : void {
+
+        if (Math.abs(this.speedTarget.x) < 0.01 && Math.abs(this.speed.x) < 0.01) {
+
+            this.sprite.setFrame(0, 0);
+            return;
+        }
+
+        const speed : number = 12 - 4*Math.abs(this.speed.x);
+        this.sprite.animate(0, 1, 4, speed, event.tick);
+    }
+
+
+    private animateJumping(event : ProgramEvent) : void {
+
+        const THRESHOLD : number = 0.50;
+
+        let frame : number = 1;
+        if (this.speed.y < -THRESHOLD) {
+
+            frame = 0;
+        }
+        else if (this.speed.y > THRESHOLD) {
+
+            frame = 2;
+        }
+
+        this.sprite.setFrame(frame, 1);
+    }
+
+
     private animate(event : ProgramEvent) : void {
 
-        // ...
+        if (this.touchGround) {
+
+            this.animateRunning(event);
+            return;
+        }
+        this.animateJumping(event);
     }
 
 
@@ -135,9 +219,37 @@ export class Player extends CollisionObject {
         this.control(event);
         this.animate(event);
         this.updateJumping(event);
+        this.determineFriction();
+        this.determineBounceFactor();
         this.updateDust(camera, event);
 
         this.updateFlags();
+    }
+
+
+    protected cameraEvent(enteredCamera : boolean, camera : Camera, event : ProgramEvent) : void {
+        
+        if (camera.isMoving()) {
+
+            return;
+        }
+
+        const camPos : Vector = camera.position;
+
+        this.horizontalCollision(camPos.x, 0, camera.height, -1, event);
+        
+        if (this.horizontalCollision(camPos.x + camera.width, 0, camera.height, 1, event)) {
+
+            camera.move(1, 0);
+            this.speed.zero();
+            this.speedTarget.zero();
+        }
+    }
+
+
+    protected cameraMovementEvent(camera : Camera, event : ProgramEvent) : void {
+        
+        this.pos.x += camera.getMoveSpeed()*16*event.tick;
     }
 
 
@@ -149,7 +261,10 @@ export class Player extends CollisionObject {
 
             this.touchGround = true;
             this.ledgeTimer = LEDGE_TIME;
+            return;
         }
+
+        this.jumpTimer = 0.0;
     }
 
 
@@ -174,15 +289,11 @@ export class Player extends CollisionObject {
             return;
         }
 
-        // const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
+        const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
 
-        const dx : number = this.pos.x - 8;
-        const dy : number = this.pos.y - 8 + 1;
+        const dx : number = this.pos.x - 12;
+        const dy : number = this.pos.y - 12 + 1;
 
-        // this.sprite.draw(canvas, bmpPlayer, dx, dy);
-
-        canvas.setColorF(1.0, 0.0, 0.0);
-        canvas.fillRect(dx, dy, 16, 16);
-        canvas.setColor();
+        this.sprite.draw(canvas, bmpPlayer, dx, dy, this.flip);
     }
 }

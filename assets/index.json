@@ -3,7 +3,12 @@
     "bitmapPath": "assets/bitmaps/",
     "bitmaps": [
 
+        {"name": "player", "path": "player.png"},
+
+        {"name": "background1", "path": "background1.png"},
+
         {"name": "tileset1", "path": "tileset1.png"},
+
         {"name": "font", "path": "font.png"}
     ],
 

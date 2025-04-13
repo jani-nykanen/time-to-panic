@@ -7,9 +7,16 @@ export class Camera {
     
 
     private pos : Vector;
+    private startPos : Vector;
+    private target : Vector;
+    private moveDirection : Vector;
 
     private viewWidth : number;
     private viewHeight : number;
+
+    private moving : boolean = false;
+    private moveTimer : number = 0;
+    private moveSpeed : number = 1.0/16.0;
 
 
     public get width() : number {
@@ -28,9 +35,55 @@ export class Camera {
     constructor(x : number = 0, y : number = 0, event : ProgramEvent) {
 
         this.pos = new Vector(x, y);
+        this.startPos = this.pos.clone();
+        this.target = this.pos.clone();
+        this.moveDirection = new Vector();
 
         this.viewWidth = event.screenWidth;
         this.viewHeight = event.screenHeight;
+    }
+
+
+    private updateMovement(event : ProgramEvent) : void {
+
+        this.moveTimer -= this.moveSpeed*event.tick;
+        if (this.moveTimer <= 0.0) {
+
+            this.moveTimer = 0.0;
+
+            this.moving = false;
+            this.pos.makeEqual(this.target);
+            this.startPos.makeEqual(this.pos);
+
+            return;
+        }
+
+        const t : number = this.moveTimer;
+
+        this.pos.x = t*this.startPos.x + (1.0 - t)*this.target.x;
+        this.pos.y = t*this.startPos.y + (1.0 - t)*this.target.y;
+    }
+
+
+    public move(dirx : number, diry : number, moveSpeed : number = 1.0/32.0) : void {
+
+        if (this.moving) {
+
+            return;
+        }
+
+        this.startPos.makeEqual(this.pos);
+
+        this.moveTimer = 1.0;
+        this.moveSpeed = moveSpeed;
+
+        this.target.x = this.pos.x + dirx*this.width;
+        this.target.y = this.pos.y + diry*this.height;
+
+        this.moveDirection.x = dirx;
+        this.moveDirection.y = diry;
+
+        this.moving = true;
     }
 
 
@@ -38,11 +91,46 @@ export class Camera {
 
         this.viewWidth = event.screenWidth;
         this.viewHeight = event.screenHeight;
+
+        if (this.moving) {
+
+            this.updateMovement(event);
+        }
     }
 
 
     public apply(canvas : Canvas) : void {
 
         canvas.moveTo(-this.pos.x, -this.pos.y);
+    }
+
+
+    public isInside(center : Vector, size : Vector) : boolean {
+
+        const left : number = center.x - size.x/2;
+        const top : number = center.y - size.y/2;
+
+        return left + size.x >= this.pos.x &&
+               top + size.y >= this.pos.y &&
+               left <= this.pos.x + this.viewWidth &&
+               top <= this.pos.y + this.viewHeight;
+    }
+
+
+    public isMoving() : boolean {
+
+        return this.moving;
+    }
+
+
+    public getMoveDirection() : Vector {
+
+        return this.moveDirection.clone();
+    }
+
+
+    public getMoveSpeed() : number {
+
+        return this.moveSpeed;
     }
 }

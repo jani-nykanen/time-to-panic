@@ -3,6 +3,7 @@ import { Assets, InputState, ProgramEvent } from "../core/interface.js";
 import { Canvas, Bitmap, Flip } from "../gfx/interface.js";
 import { Camera } from "./camera.js";
 import { Vector } from "../common/vector.js";
+import { clamp } from "../common/mathutil.js";
 
 
 export class RenderLayer {
@@ -26,7 +27,10 @@ export class RenderLayer {
     }
 
 
-    public draw(canvas : Canvas, camera : Camera, assets : Assets) : void {
+    public draw(canvas : Canvas, camera : Camera, assets : Assets, 
+        isShadow : boolean = false, 
+        shadowXOff : number = 0.0, shadowYOff : number = 0.0,
+        shadowAlpha : number = 0.33) : void {
 
         const CAMERA_MARGIN : number = 1;   
 
@@ -45,13 +49,15 @@ export class RenderLayer {
         }
 
         canvas.beginSpriteBatching(bmp);
-        canvas.setColor();
         for (let layer : number = 0; layer < this.layers.length; ++ layer) {
             for (let y : number = starty; y < endy; ++ y) {
 
                 for (let x : number = startx; x < endx; ++ x) {
 
-                    const tileID : number = this.layers[layer][y*this.width + x] ?? 0;
+                    const dx : number = clamp(x, 0, this.width - 1);
+                    const dy : number = clamp(y, 0, this.height - 1);
+
+                    const tileID : number = this.layers[layer][dy*this.width + dx] ?? 0;
                     if (tileID == 0) {
 
                         continue;
@@ -64,6 +70,14 @@ export class RenderLayer {
             }
         }
         canvas.endSpriteBatching();
-        canvas.drawSpriteBatch();
+
+        if (isShadow) {
+
+            // TODO: Might not work with multiple overlaying layers
+            // even with the stencil buffer on (todo: figure out how
+            // it works)
+            canvas.setColor(0, 0, 0, shadowAlpha);
+        }
+        canvas.drawSpriteBatch(shadowXOff, shadowYOff);
     }
 }

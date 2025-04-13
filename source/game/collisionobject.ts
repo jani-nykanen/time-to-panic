@@ -1,4 +1,5 @@
 import { Rectangle } from "../common/rectangle.js";
+import { Vector } from "../common/vector.js";
 import { ProgramEvent } from "../core/interface.js";
 import { GameObject } from "./gameobject.js";
 
@@ -9,12 +10,16 @@ export class CollisionObject extends GameObject {
     protected collisionBox : Rectangle;
     protected takeCollisions : boolean = true;
 
+    protected bounceFactor : Vector;
+
 
     constructor(x : number, y : number, exist : boolean = true) {
 
         super(x, y, exist);
 
         this.collisionBox = new Rectangle(0, 0, 16, 16);
+
+        this.bounceFactor = new Vector(0, 0);
     }
 
 
@@ -51,7 +56,7 @@ export class CollisionObject extends GameObject {
         if (bottom || top) {
     
             this.pos.y = y - this.collisionBox.y - this.collisionBox.h/2*dir;
-            this.speed.y = 0.0
+            this.speed.y *= -this.bounceFactor.y;
                 
             this.verticalCollisionEvent?.(dir, event);
     
@@ -90,7 +95,7 @@ export class CollisionObject extends GameObject {
         if (right || left) {
     
             this.pos.x = x - this.collisionBox.x - this.collisionBox.w/2*dir;
-            this.speed.x = 0.0
+            this.speed.x *= -this.bounceFactor.x;
                 
             this.horizontalCollisionEvent?.(dir, event);
     

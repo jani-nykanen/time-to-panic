@@ -22,6 +22,9 @@ export class GameObject implements ExistingObject {
 
     protected hitbox : Rectangle;
 
+    protected inCamera : boolean = false;
+    protected cameraCheckArea : Vector;
+
 
     constructor(x : number = 0, y : number = 0, exist : boolean = false) {
 
@@ -34,12 +37,16 @@ export class GameObject implements ExistingObject {
 
         this.hitbox = new Rectangle(0, 0, 16, 16)
 
+        this.cameraCheckArea = new Vector(0, 0, 32, 32);
+
         this.exist = exist;
     }
 
 
     protected updateEvent?(camera : Camera, event : ProgramEvent) : void;
     protected postMovementEvent?(event : ProgramEvent) : void;
+    protected cameraEvent?(enteredCamera : boolean, camera : Camera, event : ProgramEvent) : void;
+    protected cameraMovementEvent?(camera : Camera, event : ProgramEvent) : void;
     protected die?(event : ProgramEvent) : boolean;
 
 
@@ -54,6 +61,26 @@ export class GameObject implements ExistingObject {
 
 
     public draw?(canvas : Canvas, assets? : Assets | undefined, bmp? : Bitmap | undefined) : void;
+
+
+    public cameraCheck(camera : Camera, event : ProgramEvent) : void {
+
+        if (!this.exist) {
+
+            return;
+        }
+        
+        const wasInCamera : boolean = this.inCamera;
+        this.inCamera = camera.isInside(this.pos, this.cameraCheckArea);
+
+        const enteredCamera : boolean = this.inCamera && this.inCamera != wasInCamera;
+        this.cameraEvent?.(enteredCamera, camera, event);
+        
+        if (this.dying && !this.inCamera) {
+
+            this.exist = false;
+        }
+    }
 
 
     public update(camera : Camera, event : ProgramEvent) : void {
@@ -72,6 +99,12 @@ export class GameObject implements ExistingObject {
                 this.exist = false;
                 this.dying = false;
             }
+            return;
+        }
+
+        if (camera.isMoving()) {
+
+            this.cameraMovementEvent?.(camera, event);
             return;
         }
 

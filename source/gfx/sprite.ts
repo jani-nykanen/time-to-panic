@@ -63,13 +63,8 @@ export class AnimatedSprite {
 
         // To avoid semi-infinite loops
         const MAX_FRAME_SKIP : number = 5;
-        // Non-positive frame speed means that the frame changes
-        // infinitely fast, thus we do not animate at all.
-        // (TODO: Negative speed can also mean frame skip, though.)
-        if (frameTime <= 0) {
-
-            return;
-        }
+        
+        frameTime = Math.max(frameTime, 1);
 
         const dir : number = Math.sign(endFrame - startFrame);
 
