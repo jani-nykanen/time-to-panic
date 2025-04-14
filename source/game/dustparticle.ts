@@ -10,6 +10,7 @@ export class DustParticle extends GameObject {
 
 
     private sprite : AnimatedSprite;
+    private id : number = 0;
 
 
     constructor() {
@@ -26,10 +27,8 @@ export class DustParticle extends GameObject {
         
         const FRAME_TIME : number = 8;
 
-        // TODO: If I happen to need other dust particles in future, then
-        // pass starting column & row in "spawn" method.
-        this.sprite.animate(3, 4, 8, FRAME_TIME, event.tick);
-        if (this.sprite.column == 8) {
+        this.sprite.animate(this.id, 0, 4, FRAME_TIME, event.tick);
+        if (this.sprite.column == 4) {
 
             this.exist = false;
         }
@@ -47,7 +46,7 @@ export class DustParticle extends GameObject {
     }
 
 
-    public spawn(x : number, y : number, speedx : number, speedy : number) : void {
+    public spawn(x : number, y : number, speedx : number, speedy : number, id : number = 0) : void {
 
         this.pos = new Vector(x, y);
         this.speed = new Vector(speedx, speedy);
@@ -57,6 +56,8 @@ export class DustParticle extends GameObject {
         this.dying = false;
         this.exist = true;
 
-        this.sprite.setFrame(4, 3);
+        this.id = id;
+
+        this.sprite.setFrame(0, id);
     }
 }

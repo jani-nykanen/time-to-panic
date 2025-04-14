@@ -35,6 +35,8 @@ export class ObjectManager {
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
+        this.player?.preDraw(canvas, assets);
+
         this.player?.draw(canvas, assets);
     }
 }

@@ -26,6 +26,8 @@ export class Player extends CollisionObject {
     private touchGround : boolean = false;
     private ledgeTimer : number = 0;
     private jumpTimer : number = 0;
+    private doubleJumping : boolean = false;
+    private canDoubleJump : boolean = false;
 
 
     constructor(x : number, y : number) {
@@ -49,6 +51,7 @@ export class Player extends CollisionObject {
     private controlJumping(event : ProgramEvent) : void {
 
         const JUMP_TIME_BASE : number = 12.0;
+        const DOUBLE_JUMP_TIME : number = 8.0;
 
         const jumpButton : InputState = event.input.getAction("jump");
         if (jumpButton == InputState.Pressed) {
@@ -58,6 +61,12 @@ export class Player extends CollisionObject {
                 this.jumpTimer = JUMP_TIME_BASE;
                 this.touchGround = false;
                 this.ledgeTimer = 0;
+            }
+            else if (this.canDoubleJump) {
+
+                this.jumpTimer = DOUBLE_JUMP_TIME;
+                this.canDoubleJump = false;
+                this.doubleJumping = true;
             }
         }
         else if (jumpButton == InputState.Released) {
@@ -138,6 +147,15 @@ export class Player extends CollisionObject {
     }
 
 
+    private updateTimers(event : ProgramEvent) : void {
+
+        if (this.ledgeTimer > 0) {
+
+            this.ledgeTimer -= event.tick;
+        }
+    }
+    
+
     private animateRunning(event : ProgramEvent) : void {
 
         if (Math.abs(this.speedTarget.x) < 0.01 && Math.abs(this.speed.x) < 0.01) {
@@ -154,6 +172,20 @@ export class Player extends CollisionObject {
     private animateJumping(event : ProgramEvent) : void {
 
         const THRESHOLD : number = 0.50;
+        const SPIN_MAX_SPEED : number = 0.0;
+
+        if (this.doubleJumping) {
+
+            this.sprite.animate(2, 0, 7, 2, event.tick);
+
+            if (this.sprite.column == 0 && 
+                this.jumpTimer <= 0 &&
+                this.speed.y >= SPIN_MAX_SPEED) {
+
+                this.doubleJumping = false;
+            }
+            return;
+        }
 
         let frame : number = 1;
         if (this.speed.y < -THRESHOLD) {
@@ -182,28 +214,30 @@ export class Player extends CollisionObject {
 
     private updateDust(camera : Camera, event : ProgramEvent) : void {
 
-        const X_OFFSET : number = -4;
-        const Y_OFFSET : number = 7;
-        const SPEED_X : number = -2.0;
-        const SPEED_Y : number = 1.0;
-
         const DUST_TIME : number = 8.0;
 
         this.dustGenerator.update(camera, event);
-        if (!this.touchGround) {
+        if (!this.doubleJumping && (!this.touchGround || Math.abs(this.speedTarget.x) <= 0.01)) {
 
             return;
         }
 
-        this.dustTimer += event.tick;
+        const dustSpeed : number = this.doubleJumping ? 2 : 1;
+        const speedy : number = this.doubleJumping ? 1.0 : 0.0;
+
+        const xoff : number = this.doubleJumping ? 0 : -4;
+        const yoff : number = this.doubleJumping ? 8 : 8;
+
+        this.dustTimer += dustSpeed*event.tick;
         if (this.dustTimer >= DUST_TIME) {
 
             this.dustTimer -= DUST_TIME;
 
             this.dustGenerator.next().spawn(
-                this.pos.x + X_OFFSET,
-                this.pos.y + Y_OFFSET,
-                SPEED_X, SPEED_Y);
+                this.pos.x + xoff,
+                this.pos.y + yoff,
+                0.0, speedy,
+                this.doubleJumping ? 1 : 0);
         }
     }
 
@@ -222,6 +256,7 @@ export class Player extends CollisionObject {
         this.determineFriction();
         this.determineBounceFactor();
         this.updateDust(camera, event);
+        this.updateTimers(event);
 
         this.updateFlags();
     }
@@ -261,6 +296,8 @@ export class Player extends CollisionObject {
 
             this.touchGround = true;
             this.ledgeTimer = LEDGE_TIME;
+            this.canDoubleJump = true;
+            this.doubleJumping = false;
             return;
         }
 
@@ -275,10 +312,12 @@ export class Player extends CollisionObject {
             return;
         }
 
-        const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
+        const bmpDust : Bitmap | undefined = assets.getBitmap("dust");
 
-        // Dust
-        this.dustGenerator.draw(canvas, assets, bmpPlayer);
+        // canvas.beginSpriteBatching(bmpDust);
+        this.dustGenerator.draw(canvas, assets, bmpDust);
+        // canvas.endSpriteBatching();
+        // canvas.drawSpriteBatch();
     }
 
 

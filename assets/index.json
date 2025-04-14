@@ -4,6 +4,7 @@
     "bitmaps": [
 
         {"name": "player", "path": "player.png"},
+        {"name": "dust", "path": "dust.png"},
 
         {"name": "background1", "path": "background1.png"},
 
