@@ -6,14 +6,15 @@ import { Player } from "./player.js";
 import { Stage } from "./stage.js";
 import { Coin } from "./coin.js";
 import { GameState } from "./gamestate.js";
+import { FlyingText } from "./flyingtext.js";
 
 
 export class ObjectManager {
 
 
     private player : Player | undefined = undefined;
-
     private coins : Coin[];
+    private flyingText : ObjectGenerator<FlyingText>;
 
     private readonly state : GameState;
 
@@ -21,6 +22,7 @@ export class ObjectManager {
     constructor(state : GameState) {
         
         this.coins = new Array<Coin> ();
+        this.flyingText = new ObjectGenerator<FlyingText> (FlyingText);
 
         this.state = state;
     }
@@ -43,6 +45,25 @@ export class ObjectManager {
     }
 
 
+    private drawCoins(canvas : Canvas, assets : Assets) : void {
+
+        const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
+        for (const c of this.coins) {
+            
+            c.draw(canvas, assets, bmpCoin);
+        }
+    }
+
+    
+    private drawObjects(canvas : Canvas, assets : Assets) : void {
+
+        this.player?.preDraw(canvas, assets);
+
+        this.drawCoins(canvas, assets);
+        this.player?.draw(canvas, assets);
+    }
+
+
     public init(stage : Stage | undefined, event : ProgramEvent) : void {
 
         stage.iterateObjectLayer((value : number, x : number, y : number) : void => {
@@ -55,7 +76,7 @@ export class ObjectManager {
             // Player
             case 1:
 
-                this.player = new Player(dx, dy, this.state);
+                this.player = new Player(dx, dy, this.state, this.flyingText);
                 break;
 
             // Coin
@@ -83,19 +104,21 @@ export class ObjectManager {
         stage?.objectCollision(this.player, camera, event);
     
         this.updateCoins(camera, event);
+        this.flyingText.update(camera, event);
+    }
+
+
+    public drawShadowLayer(canvas : Canvas, assets : Assets, shadowAlpha : number = 0.25) : void {
+
+        canvas.setColor(0, 0, 0, shadowAlpha);
+        this.drawObjects(canvas, assets);
     }
 
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
-        this.player?.preDraw(canvas, assets);
+        this.drawObjects(canvas, assets);
 
-        const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
-        for (const c of this.coins) {
-            
-            c.draw(canvas, assets, bmpCoin);
-        }
-
-        this.player?.draw(canvas, assets);
+        this.flyingText.draw(canvas, assets, assets.getBitmap("font_outlines"));
     }
 }

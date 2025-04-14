@@ -18,6 +18,9 @@ export class Camera {
     private moveTimer : number = 0;
     private moveSpeed : number = 1.0/16.0;
 
+    private shakeTimer : number = 0;
+    private shakeAmount : number = 0;
+
 
     public get width() : number {
 
@@ -92,6 +95,11 @@ export class Camera {
         this.viewWidth = event.screenWidth;
         this.viewHeight = event.screenHeight;
 
+        if (this.shakeTimer > 0) {
+
+            this.shakeTimer -= event.tick;
+        }
+
         if (this.moving) {
 
             this.updateMovement(event);
@@ -99,8 +107,16 @@ export class Camera {
     }
 
 
-    public apply(canvas : Canvas) : void {
+    public apply(canvas : Canvas, applyShake : boolean = true) : void {
 
+        if (applyShake && this.shakeTimer > 0) {
+
+            const shakex : number = Math.round(Math.random()*this.shakeAmount*2.0) - this.shakeAmount;
+            const shakey : number = Math.round(Math.random()*this.shakeAmount*2.0) - this.shakeAmount;
+
+            canvas.moveTo(-this.pos.x + shakex, -this.pos.y + shakey);
+            return;
+        }
         canvas.moveTo(-this.pos.x, -this.pos.y);
     }
 
@@ -132,5 +148,18 @@ export class Camera {
     public getMoveSpeed() : number {
 
         return this.moveSpeed;
+    }
+
+
+    public isShaking() : boolean {
+
+        return this.shakeTimer > 0;
+    }
+
+
+    public shake(amount : number, time : number) : void {
+
+        this.shakeAmount = amount;
+        this.shakeTimer = time;
     }
 }

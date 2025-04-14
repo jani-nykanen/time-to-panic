@@ -9,10 +9,17 @@ import { DustParticle } from "./dustparticle.js";
 import { Rectangle } from "../common/rectangle.js";
 import { GameState } from "./gamestate.js";
 import { Stage } from "./stage.js";
+import { FlyingText } from "./flyingtext.js";
+import { RGBA } from "../common/rgba.js";
 
 
 const RUN_TARGET_SPEED : number = 2.0;
 const BASE_GRAVITY : number = 4.0;
+
+const MONEY_COLORS : RGBA[] = [
+    new RGBA(255, 219, 109),
+    new RGBA(219, 182, 255)
+];
 
 
 export class Player extends CollisionObject {
@@ -23,6 +30,7 @@ export class Player extends CollisionObject {
     private direction : number = 1;
 
     private dustGenerator : ObjectGenerator<DustParticle>;
+    private flyingText : ObjectGenerator<FlyingText>;
     private dustTimer : number = 0;
 
     private touchGround : boolean = false;
@@ -35,11 +43,12 @@ export class Player extends CollisionObject {
     private respawnPointFound : boolean = true;
 
     private respawning : boolean = false;
+    private deathTimer : number = 0.0;
 
     public readonly state : GameState;
 
 
-    constructor(x : number, y : number, state : GameState) {
+    constructor(x : number, y : number, state : GameState, flyingText : ObjectGenerator<FlyingText>) {
 
         super(x, y, true);
 
@@ -51,6 +60,7 @@ export class Player extends CollisionObject {
         this.sprite = new AnimatedSprite(24, 24);
 
         this.dustGenerator = new ObjectGenerator<DustParticle> (DustParticle);
+        this.flyingText = flyingText;
 
         this.collisionBox = new Rectangle(0, 1, 6, 14);
 
@@ -264,6 +274,7 @@ export class Player extends CollisionObject {
     private initiateRespawn(event : ProgramEvent) : void {
 
         this.pos.makeEqual(this.respawnPoint);
+        this.oldPos.makeEqual(this.pos);
 
         this.speedTarget.zero();
         this.speed.zero();
@@ -275,6 +286,19 @@ export class Player extends CollisionObject {
         this.canDoubleJump = true;
 
         this.respawning = true;
+        this.dying = false;
+        this.exist = true;
+    }
+
+
+    private makeDie(event : ProgramEvent) : void {
+
+        this.dying = true;
+        this.deathTimer = 0.0;
+
+        this.state.addMoney(-100);
+        this.flyingText.next().spawn(
+            this.pos.x, this.pos.y - 12, -100, new RGBA(255, 73, 0));
     }
 
 
@@ -286,6 +310,35 @@ export class Player extends CollisionObject {
             this.sprite.setFrame(0, 0);
             this.respawning = false;
         }
+    }
+
+
+    private drawDeath(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const ORB_COUNT : number = 8;
+        const ORB_DISTANCE : number = 48;
+
+        const t : number = this.deathTimer;
+        const step : number = Math.PI*2 / ORB_COUNT;
+
+        const dx : number = Math.round(this.pos.x);
+        const dy : number = Math.round(this.pos.y);
+
+        if (t > 0.5) {
+
+            canvas.setAlpha(1.0 - (t - 0.5)*2.0);
+        }
+
+        for (let i : number = 0; i < ORB_COUNT; ++ i) {
+
+            const angle : number = step*i;
+
+            this.sprite.draw(canvas, bmp,
+                dx + Math.round(Math.cos(angle)*t*ORB_DISTANCE) - 12,
+                dy + Math.round(Math.sin(angle)*t*ORB_DISTANCE) - 12);
+        }
+
+        canvas.setAlpha();
     }
 
 
@@ -354,6 +407,31 @@ export class Player extends CollisionObject {
     }
 
 
+    protected die(event: ProgramEvent, camera : Camera | undefined) : boolean {
+        
+        const DEATH_SPEED : number = 1.0/30.0;
+
+        if (camera != undefined) {
+
+            if (!camera.isShaking()) {
+
+                camera.shake(4, 1.0/DEATH_SPEED + 1);
+            }
+            this.dustGenerator.update(camera, event);
+        }
+
+        this.sprite.animate(0, 5, 8, 3, event.tick);
+
+        this.deathTimer += DEATH_SPEED*event.tick;
+        if (this.deathTimer >= 1.0) {
+
+            this.initiateRespawn(event);
+        }
+        // Never return true
+        return false;
+    }
+
+
     public hurtCollision(x : number, y : number, w : number, h : number, event : ProgramEvent) : void {
         
         if (!this.isActive() || this.respawning) {
@@ -363,7 +441,7 @@ export class Player extends CollisionObject {
 
         if (this.overlayCollisionArea(x - 1, y - 1, w + 2, h + 2)) {
 
-            this.initiateRespawn(event);
+            this.makeDie(event);
         }
     }
 
@@ -392,6 +470,11 @@ export class Player extends CollisionObject {
         }
 
         const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
+        if (this.dying) {
+
+            this.drawDeath(canvas, bmpPlayer);
+            return;
+        }
 
         const dx : number = this.pos.x - 12;
         const dy : number = this.pos.y - 12 + 1;
@@ -416,6 +499,15 @@ export class Player extends CollisionObject {
 
             this.respawnPointFound = true;
         }
+    }
+
+
+    public earnMoney(amount : number, colorID : number, event : ProgramEvent) : void {
+
+        this.state.addMoney(amount);
+
+        this.flyingText.next().spawn(
+            this.pos.x, this.pos.y - 12, amount, MONEY_COLORS[colorID] ?? MONEY_COLORS[0]);
     }
     
 }

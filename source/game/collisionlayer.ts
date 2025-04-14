@@ -177,6 +177,9 @@ export class CollisionLayer {
                 this.tileCollision(o, x, y, colID, event);
             }
         }
+
+        // Falling out of the stage
+        o.hurtCollision?.(0, this.height*TILE_WIDTH + 16, this.width*TILE_HEIGHT, 256, event);
     }
 
 

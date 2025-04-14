@@ -28,9 +28,7 @@ export class RenderLayer {
 
 
     public draw(canvas : Canvas, camera : Camera, assets : Assets, 
-        isShadow : boolean = false, 
-        shadowXOff : number = 0.0, shadowYOff : number = 0.0,
-        shadowAlpha : number = 0.33) : void {
+        isShadow : boolean = false, shadowAlpha : number = 0.33) : void {
 
         const CAMERA_MARGIN : number = 1;   
 
@@ -73,11 +71,8 @@ export class RenderLayer {
 
         if (isShadow) {
 
-            // TODO: Might not work with multiple overlaying layers
-            // even with the stencil buffer on (todo: figure out how
-            // it works)
             canvas.setColor(0, 0, 0, shadowAlpha);
         }
-        canvas.drawSpriteBatch(shadowXOff, shadowYOff);
+        canvas.drawSpriteBatch();
     }
 }

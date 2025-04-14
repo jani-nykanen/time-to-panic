@@ -47,7 +47,7 @@ export class GameObject implements ExistingObject {
     protected postMovementEvent?(event : ProgramEvent) : void;
     protected cameraEvent?(enteredCamera : boolean, camera : Camera, event : ProgramEvent) : void;
     protected cameraMovementEvent?(camera : Camera, event : ProgramEvent) : void;
-    protected die?(event : ProgramEvent) : boolean;
+    protected die?(event : ProgramEvent, camera? : Camera) : boolean;
 
 
     protected updateMovement(event : ProgramEvent) : void {
@@ -94,7 +94,7 @@ export class GameObject implements ExistingObject {
 
         if (this.dying) {
 
-            if (this.die?.(event) ?? true) {
+            if (this.die?.(event, camera) ?? true) {
 
                 this.exist = false;
                 this.dying = false;

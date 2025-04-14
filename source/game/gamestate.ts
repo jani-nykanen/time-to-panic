@@ -1,3 +1,4 @@
+import { clamp } from "../common/mathutil.js";
 import { ProgramEvent } from "../core/interface.js";
 
 
@@ -35,6 +36,6 @@ export class GameState {
 
     public addMoney(count : number) : void {
 
-        this.moneyCount += count;
+        this.moneyCount = clamp(this.moneyCount + count, 0, 9999);
     }
 }

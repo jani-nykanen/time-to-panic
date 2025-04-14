@@ -100,7 +100,7 @@ window.onload = () => (async () => {
 
         try {
 
-            const renderer : WebGLRenderer = new WebGLRenderer(320, 192, false);
+            const renderer : WebGLRenderer = new WebGLRenderer(400, 224, false);
             const audio : WebAudioPlayer = new WebAudioPlayer(ctx);
 
             (new BaseProgram(audio, renderer)).run(initialEvent, onloadEvent, printError);

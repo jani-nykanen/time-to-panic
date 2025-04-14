@@ -57,20 +57,14 @@ export class Stage {
     }
 
 
+    public drawShadowLayer(canvas : Canvas, assets : Assets, camera : Camera, shadowAlpha : number = 0.25) : void {
+        
+        this.renderLayer.draw(canvas, camera, assets, true, shadowAlpha);
+    }
+
+
     public draw(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        // Shadow layer
-        canvas.toggleShadowRendering(true);
-        canvas.clearShadowBuffer();
-
-        canvas.applyEffect(Effect.FixedColor);
-        this.renderLayer.draw(canvas, camera, assets, true, 2, 2, 0.25);
-        
-        canvas.toggleShadowRendering(false);
-        canvas.applyEffect(Effect.None);
-        canvas.setColor();
-
-        // Base layer
         this.renderLayer.draw(canvas, camera, assets);
     }
 
@@ -103,7 +97,6 @@ export class Stage {
     public findRespawnPoint(camera : Camera) : Vector {
 
         const x : number = Math.floor(camera.position.x/16);
-
         return new Vector(x, this.collisionLayer.findRespawnPoint(x));
     }
 }

@@ -17,7 +17,7 @@ export class Background {
 
     private drawForest(canvas : Canvas, assets : Assets, camera : Camera) : void {
 
-        const FOREST_HEIGHT : number = 112;
+        const FOREST_HEIGHT : number = 128;
 
         const bmp : Bitmap | undefined = assets.getBitmap("background1");
 

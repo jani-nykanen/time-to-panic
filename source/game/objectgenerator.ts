@@ -39,6 +39,7 @@ export class ObjectGenerator<T extends GameObject> {
 
                 continue;
             }
+            o.cameraCheck(camera, event);
             o.update(camera, event);
         }   
     }

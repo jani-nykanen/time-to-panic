@@ -79,7 +79,7 @@ export class Coin extends GameObject {
             this.dying = true;
             this.sprite.setFrame(4, this.type, false);
 
-            player.state.addMoney(MONEY_BONUS[this.type] ?? 0);
+            player.earnMoney(MONEY_BONUS[this.type] ?? 0, this.type, event);
         }
     } 
     

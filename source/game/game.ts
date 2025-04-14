@@ -30,6 +30,27 @@ export class GameScene implements Scene {
     }
 
 
+    private drawShadowLayer(canvas : Canvas, assets : Assets) : void {
+
+        const SHADOW_ALPHA : number = 0.25;
+
+        canvas.toggleShadowRendering(true);
+        canvas.clearShadowBuffer();
+        canvas.applyEffect(Effect.FixedColor);
+
+        canvas.move(2, 2);
+
+        this.stage?.drawShadowLayer(canvas, assets, this.camera, SHADOW_ALPHA);
+        this.objects.drawShadowLayer(canvas, assets, SHADOW_ALPHA);
+
+        canvas.toggleShadowRendering(false);
+        canvas.applyEffect(Effect.None);
+        canvas.setColor();
+
+        canvas.move(-2, -2);
+    }
+
+
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
         this.stage = new Stage(
@@ -57,7 +78,10 @@ export class GameScene implements Scene {
 
         this.background.draw(canvas, assets, this.camera);
 
-        this.camera.apply(canvas);
+        this.camera.apply(canvas, true);
+
+        this.drawShadowLayer(canvas, assets);
+        
         this.stage?.draw(canvas, assets, this.camera);
         this.objects.draw(canvas, assets);
 
