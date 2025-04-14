@@ -11,6 +11,9 @@ import { GameObject } from "./gameobject.js";
 import { Player } from "./player.js";
 
 
+const MONEY_BONUS : number[] = [50, 200];
+
+
 export class Coin extends GameObject {
 
 
@@ -44,6 +47,13 @@ export class Coin extends GameObject {
     }
 
 
+    protected die(event : ProgramEvent) : boolean {
+        
+        this.sprite.animate(this.type, 4, 8, 4, event.tick);
+        return this.sprite.column >= 8;
+    }
+
+
     protected updateEvent(camera : Camera, event : ProgramEvent) : void {
         
         const WAVE_SPEED : number = Math.PI*2/120.0;
@@ -66,7 +76,10 @@ export class Coin extends GameObject {
 
         if (player.overlayObject(this)) {
 
-            this.exist = false;
+            this.dying = true;
+            this.sprite.setFrame(4, this.type, false);
+
+            player.state.addMoney(MONEY_BONUS[this.type] ?? 0);
         }
     } 
     

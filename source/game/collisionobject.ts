@@ -27,6 +27,9 @@ export class CollisionObject extends GameObject {
     protected horizontalCollisionEvent?(dir : -1 | 1, event : ProgramEvent) : void;
 
 
+    public hurtCollision?(x : number, y : number, w : number, h : number, event : ProgramEvent) : void;
+
+
     public verticalCollision(x : number, y : number, w : number, dir : -1 | 1, event : ProgramEvent) : boolean {
 
         const SAFE_MARGIN_NEAR : number = 1.0;
@@ -108,5 +111,14 @@ export class CollisionObject extends GameObject {
     public doesTakeCollisions() : boolean {
 
         return this.takeCollisions;
+    }
+
+    
+    protected overlayCollisionArea(x : number, y : number, w : number, h : number) : boolean {
+
+        return this.pos.x + this.collisionBox.x + this.collisionBox.w/2 >= x &&
+               this.pos.x + this.collisionBox.x - this.collisionBox.w/2 <= x + w && 
+               this.pos.y + this.collisionBox.y + this.collisionBox.h/2 >= y &&
+               this.pos.y + this.collisionBox.y - this.collisionBox.h/2 <= y + h;
     }
 }

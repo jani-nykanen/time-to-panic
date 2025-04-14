@@ -7,6 +7,8 @@ import { Camera } from "./camera.js";
 import { ObjectGenerator } from "./objectgenerator.js";
 import { DustParticle } from "./dustparticle.js";
 import { Rectangle } from "../common/rectangle.js";
+import { GameState } from "./gamestate.js";
+import { Stage } from "./stage.js";
 
 
 const RUN_TARGET_SPEED : number = 2.0;
@@ -29,10 +31,19 @@ export class Player extends CollisionObject {
     private doubleJumping : boolean = false;
     private canDoubleJump : boolean = false;
 
+    private respawnPoint : Vector;
+    private respawnPointFound : boolean = true;
 
-    constructor(x : number, y : number) {
+    private respawning : boolean = false;
+
+    public readonly state : GameState;
+
+
+    constructor(x : number, y : number, state : GameState) {
 
         super(x, y, true);
+
+        this.respawnPoint = this.pos.clone();
 
         this.friction.x = 0.15;
         this.friction.y = 0.15;
@@ -47,6 +58,8 @@ export class Player extends CollisionObject {
         this.cameraCheckArea = new Vector(256, 256);
 
         this.hitbox = new Rectangle(0, 0, 12, 16);
+
+        this.state = state;
     }
 
 
@@ -248,8 +261,42 @@ export class Player extends CollisionObject {
     }
 
 
+    private initiateRespawn(event : ProgramEvent) : void {
+
+        this.pos.makeEqual(this.respawnPoint);
+
+        this.speedTarget.zero();
+        this.speed.zero();
+        this.flip = Flip.None;
+        this.sprite.setFrame(3, 1);
+
+        this.jumpTimer = 0;
+        this.touchGround = true;
+        this.canDoubleJump = true;
+
+        this.respawning = true;
+    }
+
+
+    private respawn(event : ProgramEvent) : void {
+
+        this.sprite.animate(1, 3, 7, 5, event.tick);
+        if (this.sprite.column == 7) {
+
+            this.sprite.setFrame(0, 0);
+            this.respawning = false;
+        }
+    }
+
+
     protected updateEvent(camera : Camera, event : ProgramEvent) : void {
         
+        if (this.respawning) {
+
+            this.respawn(event);
+            return;
+        }
+
         this.control(event);
         this.animate(event);
         this.updateJumping(event);
@@ -278,6 +325,8 @@ export class Player extends CollisionObject {
             camera.move(1, 0);
             this.speed.zero();
             this.speedTarget.zero();
+
+            this.respawnPointFound = false;
         }
     }
 
@@ -302,6 +351,20 @@ export class Player extends CollisionObject {
         }
 
         this.jumpTimer = 0.0;
+    }
+
+
+    public hurtCollision(x : number, y : number, w : number, h : number, event : ProgramEvent) : void {
+        
+        if (!this.isActive() || this.respawning) {
+
+            return;
+        }
+
+        if (this.overlayCollisionArea(x - 1, y - 1, w + 2, h + 2)) {
+
+            this.initiateRespawn(event);
+        }
     }
 
 
@@ -335,4 +398,24 @@ export class Player extends CollisionObject {
 
         this.sprite.draw(canvas, bmpPlayer, dx, dy, this.flip);
     }
+
+
+    public stageEvent(camera : Camera, stage : Stage | undefined, event : ProgramEvent) : void {
+
+        if (stage === undefined) {
+
+            return;
+        }
+
+        if (!camera.isMoving() && !this.respawnPointFound) {
+
+            const p : Vector = stage.findRespawnPoint(camera);
+
+            this.respawnPoint.x = p.x*16 + 12;
+            this.respawnPoint.y = p.y*16 - 8;
+
+            this.respawnPointFound = true;
+        }
+    }
+    
 }

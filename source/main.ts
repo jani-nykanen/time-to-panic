@@ -9,7 +9,7 @@ const initialEvent = (event : ProgramEvent) : void => {
 
     event.assets.parseIndexFile("assets/index.json");
 
-    event.input.addAction("jump", ["Space", "KeyZ"], [0]);
+    event.input.addAction("jump", ["Space", "KeyZ"], [0], [0]);
     event.input.addAction("dash", ["ControlLeft", "ShiftLeft", "KeyX"], [2, 3]);
     event.input.addAction("pause", ["Enter", "Escape"], [7, 9]);
     event.input.addAction("back", ["Escape", "Backspace"], [1, 6, 8], undefined);

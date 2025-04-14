@@ -31,4 +31,10 @@ export class GameState {
             this.frameCount -= this.feeRate;
         }
     }
+
+
+    public addMoney(count : number) : void {
+
+        this.moneyCount += count;
+    }
 }

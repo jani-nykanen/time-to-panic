@@ -5,6 +5,7 @@ import { Camera } from "./camera.js";
 import { CollisionObject } from "./collisionobject.js";
 import { RenderLayer } from "./renderlayer.js";
 import { CollisionLayer } from "./collisionlayer.js";
+import { Vector } from "../common/vector.js";
 
 
 export class Stage {
@@ -96,5 +97,13 @@ export class Stage {
                 event(value - 256, x, y);
             }
         }
+    }
+
+
+    public findRespawnPoint(camera : Camera) : Vector {
+
+        const x : number = Math.floor(camera.position.x/16);
+
+        return new Vector(x, this.collisionLayer.findRespawnPoint(x));
     }
 }

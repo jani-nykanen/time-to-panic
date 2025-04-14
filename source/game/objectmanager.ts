@@ -5,6 +5,7 @@ import { ObjectGenerator } from "./objectgenerator.js";
 import { Player } from "./player.js";
 import { Stage } from "./stage.js";
 import { Coin } from "./coin.js";
+import { GameState } from "./gamestate.js";
 
 
 export class ObjectManager {
@@ -14,10 +15,14 @@ export class ObjectManager {
 
     private coins : Coin[];
 
+    private readonly state : GameState;
 
-    constructor() {
+
+    constructor(state : GameState) {
         
         this.coins = new Array<Coin> ();
+
+        this.state = state;
     }
 
 
@@ -50,13 +55,16 @@ export class ObjectManager {
             // Player
             case 1:
 
-                this.player = new Player(dx, dy);
+                this.player = new Player(dx, dy, this.state);
                 break;
 
             // Coin
             case 2:
+                // Fallthrough
+            // Gem
+            case 3:
 
-                this.coins.push(new Coin(dx, dy, 0));
+                this.coins.push(new Coin(dx, dy, value - 2));
                 break;
 
             default:
@@ -71,6 +79,7 @@ export class ObjectManager {
 
         this.player?.update(camera, event);
         this.player?.cameraCheck(camera, event);
+        this.player?.stageEvent(camera, stage, event);
         stage?.objectCollision(this.player, camera, event);
     
         this.updateCoins(camera, event);

@@ -13,6 +13,11 @@ const enum CollisionBit {
     Right  = 1 << 1,
     Bottom = 1 << 2,
     Left   = 1 << 3,
+
+    SpikeBottom = 1 << 4,
+    SpikeRight  = 1 << 5,
+    SpikeTop    = 1 << 6,
+    SpikeLeft   = 1 << 7,
 }
 
 
@@ -83,6 +88,9 @@ export class CollisionLayer {
         const HORIZONTAL_OFFSET : number = 1;
         const VERTICAL_OFFSET : number = 1;
 
+        const SPIKE_WIDTH : number = 10;
+        const SPIKE_HEIGHT : number = 4;
+
         const dx : number = x*TILE_WIDTH;
         const dy : number = y*TILE_HEIGHT;
 
@@ -105,6 +113,33 @@ export class CollisionLayer {
         if ((colID & CollisionBit.Right) != 0) {
 
             o.horizontalCollision(dx + TILE_WIDTH, dy + VERTICAL_OFFSET, TILE_HEIGHT - VERTICAL_OFFSET*2, -1, event);
+        }
+
+        const spikeOffX : number = (TILE_WIDTH - SPIKE_WIDTH)/2;
+        const spikeOffY : number = TILE_HEIGHT - SPIKE_HEIGHT;
+
+        // Spike bottom
+        if ((colID & CollisionBit.SpikeBottom) != 0) {
+
+            o.hurtCollision?.(dx + spikeOffX, dy + spikeOffY, SPIKE_WIDTH, SPIKE_HEIGHT, event);
+        }
+
+        // Spike top
+        if ((colID & CollisionBit.SpikeTop) != 0) {
+
+            o.hurtCollision?.(dx + spikeOffX, dy, SPIKE_WIDTH, SPIKE_HEIGHT, event);
+        }
+
+        // Spike left
+        if ((colID & CollisionBit.SpikeLeft) != 0) {
+
+            o.hurtCollision?.(dx + spikeOffY, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event);
+        }
+
+        // Spike right
+        if ((colID & CollisionBit.SpikeRight) != 0) {
+
+            o.hurtCollision?.(dx, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event);
         }
     }
 
@@ -142,5 +177,20 @@ export class CollisionLayer {
                 this.tileCollision(o, x, y, colID, event);
             }
         }
+    }
+
+
+    public findRespawnPoint(x : number) : number {
+
+        for (let y : number = 0; y < this.height; ++ y) {
+
+            const colID : number = this.collisions[y*this.width + x] ?? 0;
+
+            if ((colID & CollisionBit.Top) != 0) {
+
+                return y;
+            }
+        }
+        return 0;
     }
 }
