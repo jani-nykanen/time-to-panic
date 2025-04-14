@@ -5,6 +5,8 @@ import { Camera } from "./camera.js";
 import { ObjectManager } from "./objectmanager.js";
 import { Stage } from "./stage.js";
 import { Background } from "./background.js";
+import { GameState } from "./gamestate.js";
+import { HUD } from "./hud.js";
 
 
 export class GameScene implements Scene {
@@ -14,6 +16,8 @@ export class GameScene implements Scene {
     private background : Background;
     private stage : Stage | undefined = undefined;
     private camera : Camera;
+    private state : GameState;
+    private hud : HUD;
 
 
     constructor(event : ProgramEvent)  {
@@ -21,6 +25,9 @@ export class GameScene implements Scene {
         this.objects = new ObjectManager();
         this.camera = new Camera(0, 0, event);
         this.background = new Background(1);
+
+        this.state = new GameState(1000, 10);
+        this.hud = new HUD(this.state);
     }
 
 
@@ -38,6 +45,9 @@ export class GameScene implements Scene {
         this.camera.update(event);
         this.stage?.update(event);
         this.objects.update(this.stage, this.camera, event);
+
+        this.state.update(event);
+        this.hud.update(event);
     }
 
 
@@ -53,9 +63,7 @@ export class GameScene implements Scene {
         this.objects.draw(canvas, assets);
 
         canvas.moveTo();
-
-        const bmpFont : Bitmap | undefined = assets.getBitmap("font");
-        canvas.drawText(bmpFont, "Hello world!", 2, 2, -1, 0, Align.Left);
+        this.hud.draw(canvas, assets);
     }
 
 

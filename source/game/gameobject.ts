@@ -116,7 +116,7 @@ export class GameObject implements ExistingObject {
     
     public doesExist = () : boolean => this.exist;
     public isDying = () : boolean => this.dying;
-    public isActive = () : boolean => this.exist && !this.dying;
+    public isActive = () : boolean => this.inCamera && this.exist && !this.dying;
 
     public getPosition = () : Vector => this.pos.clone();
     public getSpeed = () : Vector => this.speed.clone();

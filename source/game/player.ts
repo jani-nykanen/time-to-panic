@@ -45,6 +45,8 @@ export class Player extends CollisionObject {
 
         this.inCamera = true;
         this.cameraCheckArea = new Vector(256, 256);
+
+        this.hitbox = new Rectangle(0, 0, 12, 16);
     }
 
 
@@ -223,10 +225,8 @@ export class Player extends CollisionObject {
         }
 
         const dustSpeed : number = this.doubleJumping ? 2 : 1;
-        const speedy : number = this.doubleJumping ? 1.0 : 0.0;
-
         const xoff : number = this.doubleJumping ? 0 : -4;
-        const yoff : number = this.doubleJumping ? 8 : 8;
+        const yoff : number = 8;
 
         this.dustTimer += dustSpeed*event.tick;
         if (this.dustTimer >= DUST_TIME) {
@@ -236,7 +236,7 @@ export class Player extends CollisionObject {
             this.dustGenerator.next().spawn(
                 this.pos.x + xoff,
                 this.pos.y + yoff,
-                0.0, speedy,
+                0.0, 0.0,
                 this.doubleJumping ? 1 : 0);
         }
     }

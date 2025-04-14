@@ -5,12 +5,14 @@
 
         {"name": "player", "path": "player.png"},
         {"name": "dust", "path": "dust.png"},
+        {"name": "coin", "path": "coin.png"},
 
         {"name": "background1", "path": "background1.png"},
 
         {"name": "tileset1", "path": "tileset1.png"},
 
-        {"name": "font", "path": "font.png"}
+        {"name": "font", "path": "font.png"},
+        {"name": "font_outlines", "path": "font_outlines.png"}
     ],
 
     "samplePath": "assets/audio/",

@@ -4,6 +4,7 @@ import { Camera } from "./camera.js";
 import { ObjectGenerator } from "./objectgenerator.js";
 import { Player } from "./player.js";
 import { Stage } from "./stage.js";
+import { Coin } from "./coin.js";
 
 
 export class ObjectManager {
@@ -11,16 +12,58 @@ export class ObjectManager {
 
     private player : Player | undefined = undefined;
 
+    private coins : Coin[];
+
 
     constructor() {
         
-        // ...
+        this.coins = new Array<Coin> ();
+    }
+
+
+    private updateCoins(camera : Camera, event : ProgramEvent) : void {
+
+        for (let i : number = 0; i < this.coins.length; ++ i) {
+
+            const c : Coin = this.coins[i];
+            c.cameraCheck(camera, event);
+            c.update(camera, event);
+            c.playerCollision(this.player!, event);
+
+            if (!c.doesExist()) {
+
+                this.coins.splice(i, 1);
+            }
+        }
     }
 
 
     public init(stage : Stage | undefined, event : ProgramEvent) : void {
 
-        this.player = new Player(64, event.screenHeight/2);
+        stage.iterateObjectLayer((value : number, x : number, y : number) : void => {
+
+            const dx : number = x*16 + 8;
+            const dy : number = y*16 + 8;
+
+            switch (value) {
+
+            // Player
+            case 1:
+
+                this.player = new Player(dx, dy);
+                break;
+
+            // Coin
+            case 2:
+
+                this.coins.push(new Coin(dx, dy, 0));
+                break;
+
+            default:
+                break;
+            }
+
+        });
     }
 
 
@@ -28,14 +71,21 @@ export class ObjectManager {
 
         this.player?.update(camera, event);
         this.player?.cameraCheck(camera, event);
-
         stage?.objectCollision(this.player, camera, event);
+    
+        this.updateCoins(camera, event);
     }
 
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
         this.player?.preDraw(canvas, assets);
+
+        const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
+        for (const c of this.coins) {
+            
+            c.draw(canvas, assets, bmpCoin);
+        }
 
         this.player?.draw(canvas, assets);
     }

@@ -16,6 +16,8 @@ export class Stage {
     private renderLayer : RenderLayer;
     private collisionLayer : CollisionLayer;
 
+    private baseMap : Tilemap;
+
 
     public get width() {
 
@@ -40,6 +42,11 @@ export class Stage {
 
         this.renderLayer = new RenderLayer(baseMap);
         this.collisionLayer = new CollisionLayer(baseMap, collisionMap);
+
+        this.baseMap = baseMap;
+
+        this.mapWidth = baseMap.width;
+        this.mapHeight = baseMap.height;
     }
 
 
@@ -73,5 +80,21 @@ export class Stage {
 
         // o.horizontalCollision(0, 0, camera.height, -1, event);
         // o.horizontalCollision(camera.width, 0, camera.height, 1, event);
+    }
+
+
+    public iterateObjectLayer(event : (value : number, x : number, y : number) => void) : void {
+
+        const objectLayer : number[] = this.baseMap.cloneLayer("objects");
+
+        for (let y : number = 0; y < this.height; ++ y) {
+
+            for (let x : number = 0; x < this.width; ++ x) {
+                
+                const value : number = objectLayer[y*this.width + x] ?? 256;
+
+                event(value - 256, x, y);
+            }
+        }
     }
 }

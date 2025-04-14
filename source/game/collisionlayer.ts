@@ -89,12 +89,12 @@ export class CollisionLayer {
         // Floor
         if ((colID & CollisionBit.Top) != 0) {
 
-            o.verticalCollision(dx, dy,  TILE_WIDTH, 1, event);
+            o.verticalCollision(dx + HORIZONTAL_OFFSET, dy,  TILE_WIDTH - HORIZONTAL_OFFSET*2, 1, event);
         }
         // Ceiling
         if ((colID & CollisionBit.Bottom) != 0) {
 
-            o.verticalCollision(dx + HORIZONTAL_OFFSET, dy + TILE_HEIGHT, TILE_WIDTH, -1, event);
+            o.verticalCollision(dx + HORIZONTAL_OFFSET, dy + TILE_HEIGHT, TILE_WIDTH - HORIZONTAL_OFFSET*2, -1, event);
         }
         // Left
         if ((colID & CollisionBit.Left) != 0) {
