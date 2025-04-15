@@ -39,6 +39,7 @@ export class Mushroom extends Enemy {
         if (this.jumping) {
 
             this.speed.y = GRAVITY;
+            this.sprite.setFrame(0, 1);
         }
     }
 

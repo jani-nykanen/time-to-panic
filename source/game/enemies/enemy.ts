@@ -26,11 +26,18 @@ export class Enemy extends CollisionObject {
     protected direction : number = 0;
 
     protected bounceTimer : number = 0;
+    protected starPos : Vector;
+
+    protected initialPos : Vector;
 
 
     constructor(x : number, y : number) {
 
         super(x, y, true);
+
+        this.starPos = new Vector();
+
+        this.initialPos = this.pos.clone();
 
         this.collisionBox = new Rectangle(0, 0, 12, 12);
         this.hitbox = new Rectangle(0, 0, 14, 14);
@@ -41,9 +48,6 @@ export class Enemy extends CollisionObject {
 
         this.cameraCheckArea = new Vector(32, 32);
     }
-
-
-    protected bounceEvent?(event : ProgramEvent) : void;
 
 
     private checkBounce(player : Player, event : ProgramEvent) : boolean {
@@ -83,10 +87,36 @@ export class Enemy extends CollisionObject {
         player.makeJump(BOUNCE_SPEED, event);
         this.bounceTimer = 1.0;
 
+        this.starPos.x = player.getPosition().x;
+        this.starPos.y = level;
+
         return true;
     }
 
 
+    private drawStars(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const MAX_DISTANCE : number = 32;
+        const FLATTEN_Y : number = 0.67;
+
+        const t : number = 1.0 - this.bounceTimer;
+        const s : number = (t*2.0) % 1.0;
+
+        for (let i : number = 0; i < 4; ++ i) {
+
+            const angle : number = Math.PI/4 + i*Math.PI/2;
+
+            const dx : number = this.starPos.x + Math.sin(angle)*t*MAX_DISTANCE;
+            const dy : number = this.starPos.y + Math.cos(angle)*t*MAX_DISTANCE*FLATTEN_Y;
+
+            const sx : number = Math.floor(s*4);
+            
+            canvas.drawBitmap(bmp, Flip.None, dx - 8, dy - 8, 96 + sx*16, 0, 16, 16);
+        }
+    }
+
+    
+    protected bounceEvent?(event : ProgramEvent) : void;
     protected playerEvent?(player : Player, event : ProgramEvent) : void;
 
 
@@ -118,7 +148,7 @@ export class Enemy extends CollisionObject {
         const left : number = Math.floor(this.pos.x/camera.width)*camera.width;
         const right : number = left + camera.width;
 
-        this.horizontalCollision(left, 0, camera.height, 1, event);
+        this.horizontalCollision(left, 0, camera.height, -1, event);
         this.horizontalCollision(right, 0, camera.height, 1, event);
 
         this.verticalCollision(left, 0, camera.width, -1, event);
@@ -193,5 +223,10 @@ export class Enemy extends CollisionObject {
         const dy : number = this.pos.y - (dh - this.sprite.height/2) + 1 + correctionShift;
 
         this.sprite.draw(canvas, bmp, dx, dy, this.flip, dw, dh);
+
+        if (this.bounceTimer > 0) {
+
+            this.drawStars(canvas, bmp);
+        }
     }
 }
