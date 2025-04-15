@@ -22,7 +22,14 @@ export class Walker extends Enemy {
         this.sprite.setFrame(0, 0);
 
         this.collisionBox = new Rectangle(0, 4, 4, 12);
-        this.hitbox = new Rectangle(0, 4, 12, 12)
+        this.hitbox = new Rectangle(0, 4, 12, 12);
+    }
+
+
+    protected bounceEvent(event : ProgramEvent) : void {
+        
+        this.speed.x = 0;
+        this.speedTarget.x = 0;
     }
 
 
@@ -36,6 +43,11 @@ export class Walker extends Enemy {
 
     protected updateAI(event : ProgramEvent) : void {
         
+        if (this.bounceTimer > 0) {
+
+            return;
+        }
+
         this.speedTarget.x = this.direction*WALK_SPEED;
         if (!this.touchGround && this.didTouchGround) {
 

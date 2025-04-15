@@ -20,6 +20,8 @@ export class DustParticle extends GameObject {
         this.friction.y = 0.025;
 
         this.sprite = new AnimatedSprite(16, 16);
+
+        this.cameraCheckArea = new Vector(0, 0, 32, 32);
     }
 
 
@@ -37,7 +39,7 @@ export class DustParticle extends GameObject {
 
     public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
         
-        if (!this.exist) {
+        if (!this.exist || !this.inCamera) {
 
             return;
         }

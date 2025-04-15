@@ -43,12 +43,15 @@ export class Enemy extends CollisionObject {
     }
 
 
+    protected bounceEvent?(event : ProgramEvent) : void;
+
+
     private checkBounce(player : Player, event : ProgramEvent) : boolean {
 
         const SPEED_EPS : number = -0.5;
         const NEAR_MARGIN : number = 2;
         const FAR_MARGIN : number = 8;
-        const EXTRA_WIDTH : number = 12;
+        const EXTRA_WIDTH : number = 8;
 
         const BOUNCE_SPEED : number = 3.0;
 
@@ -79,6 +82,7 @@ export class Enemy extends CollisionObject {
 
         player.makeJump(BOUNCE_SPEED, event);
         this.bounceTimer = 1.0;
+
         return true;
     }
 
@@ -104,14 +108,12 @@ export class Enemy extends CollisionObject {
 
         if (this.bounceTimer > 0) {
 
-            this.speed.zero();
-            this.speedTarget.zero();
+            this.bounceEvent?.(event);
             this.bounceTimer -= BOUNCE_ANIM_SPEED*event.tick;
         }
-        else {
 
-            this.updateAI?.(event);
-        }
+        this.updateAI?.(event);
+        
 
         const left : number = Math.floor(this.pos.x/camera.width)*camera.width;
         const right : number = left + camera.width;
@@ -154,12 +156,19 @@ export class Enemy extends CollisionObject {
 
         let dw : number = this.sprite.width;
         let dh : number = this.sprite.height;
+        let correctionShift : number = 0;
+
         if (this.bounceTimer > 0) {
 
             if (this.bounceTimer > 0.5) {
 
                 const t : number = 1.0 - (this.bounceTimer - 0.5)*2;
                 const st : number = Math.sin(t*Math.PI);
+
+                if (st > 0.5) {
+
+                    correctionShift = -1;
+                }
 
                 dw = this.sprite.width*(1.0 + 0.5*st);
                 dh = this.sprite.height*(1.0 - 0.5*st);
@@ -178,7 +187,7 @@ export class Enemy extends CollisionObject {
         }
 
         const dx : number = this.pos.x - dw/2;
-        const dy : number = this.pos.y - (dh - this.sprite.height/2) + 1;
+        const dy : number = this.pos.y - (dh - this.sprite.height/2) + 1 + correctionShift;
 
         this.sprite.draw(canvas, bmp, dx, dy, this.flip, dw, dh);
     }

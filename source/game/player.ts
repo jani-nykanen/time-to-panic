@@ -62,7 +62,7 @@ export class Player extends CollisionObject {
         this.dustGenerator = new ObjectGenerator<DustParticle> (DustParticle);
         this.flyingText = flyingText;
 
-        this.collisionBox = new Rectangle(0, 1, 6, 14);
+        this.collisionBox = new Rectangle(0, 1, 8, 14);
 
         this.inCamera = true;
         this.cameraCheckArea = new Vector(256, 256);
@@ -516,5 +516,7 @@ export class Player extends CollisionObject {
     public makeJump(speed : number, event : ProgramEvent) : void {
 
         this.speed.y = -speed;
+        this.canDoubleJump = true;
+        this.doubleJumping = false;
     }
 }
