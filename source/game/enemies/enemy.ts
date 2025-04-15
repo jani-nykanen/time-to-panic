@@ -120,6 +120,9 @@ export class Enemy extends CollisionObject {
 
         this.horizontalCollision(left, 0, camera.height, 1, event);
         this.horizontalCollision(right, 0, camera.height, 1, event);
+
+        this.verticalCollision(left, 0, camera.width, -1, event);
+        this.verticalCollision(left, camera.height, camera.width, 1, event);
         
         this.didTouchGround = this.touchGround;
         this.touchGround = false;
