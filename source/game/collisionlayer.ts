@@ -83,6 +83,17 @@ export class CollisionLayer {
     }
 
 
+    private boxCollision(o : CollisionObject, x : number, y : number, w : number, h : number, event : ProgramEvent) : void {
+
+        const VERTICAL_OFFSET : number = 1;
+
+        o.verticalCollision(x, y, w, 1, event);
+        o.verticalCollision(x, y + h, w, -1, event);
+        o.horizontalCollision(x, y + VERTICAL_OFFSET, h - VERTICAL_OFFSET*2, 1, event);
+        o.horizontalCollision(x + w, y + VERTICAL_OFFSET, h - VERTICAL_OFFSET*2, -1, event);
+    }
+
+
     private tileCollision(o : CollisionObject, x : number, y : number, colID : number, event : ProgramEvent) : void {
 
         const HORIZONTAL_OFFSET : number = 1;
@@ -122,24 +133,28 @@ export class CollisionLayer {
         if ((colID & CollisionBit.SpikeBottom) != 0) {
 
             o.hurtCollision?.(dx + spikeOffX, dy + spikeOffY, SPIKE_WIDTH, SPIKE_HEIGHT, event);
+            this.boxCollision(o, dx + spikeOffX, dy + spikeOffY, SPIKE_WIDTH, SPIKE_HEIGHT, event);
         }
 
         // Spike top
         if ((colID & CollisionBit.SpikeTop) != 0) {
 
             o.hurtCollision?.(dx + spikeOffX, dy, SPIKE_WIDTH, SPIKE_HEIGHT, event);
+            this.boxCollision(o, dx + spikeOffX, dy, SPIKE_WIDTH, SPIKE_HEIGHT, event);
         }
 
         // Spike left
         if ((colID & CollisionBit.SpikeLeft) != 0) {
 
             o.hurtCollision?.(dx + spikeOffY, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event);
+            this.boxCollision(o, dx + spikeOffY, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event);
         }
 
         // Spike right
         if ((colID & CollisionBit.SpikeRight) != 0) {
 
             o.hurtCollision?.(dx, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event);
+            this.boxCollision(o, dx, dy + spikeOffX, SPIKE_HEIGHT, SPIKE_WIDTH, event);
         }
     }
 

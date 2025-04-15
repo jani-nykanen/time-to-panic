@@ -90,6 +90,16 @@ export class GameObject implements ExistingObject {
             return;
         }
 
+        if (!this.inCamera) {
+
+            if (this.dying) {
+
+                this.exist = false;
+                this.dying = false;
+            }
+            return;
+        }
+
         this.oldPos.makeEqual(this.pos);
 
         if (this.dying) {

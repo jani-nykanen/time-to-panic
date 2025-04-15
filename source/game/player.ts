@@ -291,17 +291,6 @@ export class Player extends CollisionObject {
     }
 
 
-    private makeDie(event : ProgramEvent) : void {
-
-        this.dying = true;
-        this.deathTimer = 0.0;
-
-        this.state.addMoney(-100);
-        this.flyingText.next().spawn(
-            this.pos.x, this.pos.y - 12, -100, new RGBA(255, 73, 0));
-    }
-
-
     private respawn(event : ProgramEvent) : void {
 
         this.sprite.animate(1, 3, 7, 5, event.tick);
@@ -510,4 +499,22 @@ export class Player extends CollisionObject {
             this.pos.x, this.pos.y - 12, amount, MONEY_COLORS[colorID] ?? MONEY_COLORS[0]);
     }
     
+    
+    public makeDie(event : ProgramEvent) : void {
+
+        const DEATH_PENALTY : number = 100;
+
+        this.dying = true;
+        this.deathTimer = 0.0;
+
+        this.state.addMoney(-DEATH_PENALTY);
+        this.flyingText.next().spawn(
+            this.pos.x, this.pos.y - 12, -DEATH_PENALTY, new RGBA(255, 73, 0));
+    }
+
+
+    public makeJump(speed : number, event : ProgramEvent) : void {
+
+        this.speed.y = -speed;
+    }
 }

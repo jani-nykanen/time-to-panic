@@ -71,6 +71,11 @@ export class Stage {
 
     public objectCollision(o : CollisionObject, camera : Camera, event : ProgramEvent) : void {
 
+        if (!o.isActive()) {
+
+            return;
+        }
+
         this.collisionLayer.objectCollision(o, event);
 
         // o.horizontalCollision(0, 0, camera.height, -1, event);

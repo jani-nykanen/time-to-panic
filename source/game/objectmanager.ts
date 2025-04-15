@@ -7,6 +7,8 @@ import { Stage } from "./stage.js";
 import { Coin } from "./coin.js";
 import { GameState } from "./gamestate.js";
 import { FlyingText } from "./flyingtext.js";
+import { Enemy } from "./enemies/enemy.js";
+import { getEnemyByIndex } from "./enemies/index.js";
 
 
 export class ObjectManager {
@@ -14,6 +16,7 @@ export class ObjectManager {
 
     private player : Player | undefined = undefined;
     private coins : Coin[];
+    private enemies : Enemy[];
     private flyingText : ObjectGenerator<FlyingText>;
 
     private readonly state : GameState;
@@ -22,6 +25,7 @@ export class ObjectManager {
     constructor(state : GameState) {
         
         this.coins = new Array<Coin> ();
+        this.enemies = new Array<Enemy> ();
         this.flyingText = new ObjectGenerator<FlyingText> (FlyingText);
 
         this.state = state;
@@ -45,6 +49,24 @@ export class ObjectManager {
     }
 
 
+    private updateEnemies(stage : Stage | undefined, camera : Camera, event : ProgramEvent) : void {
+
+        for (let i : number = 0; i < this.enemies.length; ++ i) {
+
+            const e : Enemy = this.enemies[i];
+            e.cameraCheck(camera, event);
+            e.update(camera, event);
+            stage?.objectCollision(e, camera, event);
+            e.playerCollision(this.player!, event);
+
+            if (!e.doesExist()) {
+
+                this.enemies.splice(i, 1);
+            }
+        }
+    }
+
+
     private drawCoins(canvas : Canvas, assets : Assets) : void {
 
         const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
@@ -54,17 +76,30 @@ export class ObjectManager {
         }
     }
 
+
+    private drawEnemies(canvas : Canvas, assets : Assets) : void {
+
+        const bmpEnemies : Bitmap | undefined = assets.getBitmap("enemies");
+        for (const e of this.enemies) {
+            
+            e.draw(canvas, assets, bmpEnemies);
+        }
+    }
+
     
     private drawObjects(canvas : Canvas, assets : Assets) : void {
 
         this.player?.preDraw(canvas, assets);
 
         this.drawCoins(canvas, assets);
+        this.drawEnemies(canvas, assets);
         this.player?.draw(canvas, assets);
     }
 
 
     public init(stage : Stage | undefined, event : ProgramEvent) : void {
+
+        const ENEMY_START_INDEX : number = 33;
 
         stage.iterateObjectLayer((value : number, x : number, y : number) : void => {
 
@@ -89,6 +124,14 @@ export class ObjectManager {
                 break;
 
             default:
+
+                // Enemies
+                if (value >= ENEMY_START_INDEX) {
+
+                    // Heh, e-type
+                    const etype : Function = getEnemyByIndex(value - ENEMY_START_INDEX);
+                    this.enemies.push(new etype.prototype.constructor(dx, dy));
+                }
                 break;
             }
 
@@ -104,6 +147,7 @@ export class ObjectManager {
         stage?.objectCollision(this.player, camera, event);
     
         this.updateCoins(camera, event);
+        this.updateEnemies(stage, camera, event);
         this.flyingText.update(camera, event);
     }
 
@@ -120,5 +164,19 @@ export class ObjectManager {
         this.drawObjects(canvas, assets);
 
         this.flyingText.draw(canvas, assets, assets.getBitmap("font_outlines"));
+    }
+
+
+    public initialCameraCheck(camera : Camera, event : ProgramEvent) : void {
+
+        for (const c of this.coins) {
+
+            c.cameraCheck(camera, event);
+        }
+
+        for (const e of this.enemies) {
+
+            e.cameraCheck(camera, event);
+        }
     }
 }

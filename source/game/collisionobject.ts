@@ -121,4 +121,10 @@ export class CollisionObject extends GameObject {
                this.pos.y + this.collisionBox.y + this.collisionBox.h/2 >= y &&
                this.pos.y + this.collisionBox.y - this.collisionBox.h/2 <= y + h;
     }
+
+
+    public getCollisionBox() : Rectangle {
+
+        return this.collisionBox.clone();
+    }
 }

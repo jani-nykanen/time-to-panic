@@ -11,7 +11,7 @@ import { GameObject } from "./gameobject.js";
 import { Player } from "./player.js";
 
 
-const MONEY_BONUS : number[] = [50, 200];
+const MONEY_BONUS : number[] = [50, 100];
 
 
 export class Coin extends GameObject {
@@ -33,8 +33,6 @@ export class Coin extends GameObject {
 
         this.type = type;
         this.sprite = new AnimatedSprite(24, 24);
-
-        this.inCamera = true;
 
         this.hitbox = new Rectangle(0, 0, 16, 16);
 
