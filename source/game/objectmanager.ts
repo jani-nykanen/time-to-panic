@@ -9,6 +9,9 @@ import { GameState } from "./gamestate.js";
 import { FlyingText } from "./flyingtext.js";
 import { Enemy } from "./enemies/enemy.js";
 import { getEnemyByIndex } from "./enemies/index.js";
+import { SpecialCollider } from "./specialcollider.js";
+import { Spring } from "./spring.js";
+import { Direction } from "./direction.js";
 
 
 export class ObjectManager {
@@ -17,6 +20,7 @@ export class ObjectManager {
     private player : Player | undefined = undefined;
     private coins : Coin[];
     private enemies : Enemy[];
+    private specialColliders : SpecialCollider[];
     private flyingText : ObjectGenerator<FlyingText>;
 
     private readonly state : GameState;
@@ -26,6 +30,7 @@ export class ObjectManager {
         
         this.coins = new Array<Coin> ();
         this.enemies = new Array<Enemy> ();
+        this.specialColliders = new Array<SpecialCollider> ();
         this.flyingText = new ObjectGenerator<FlyingText> (FlyingText);
 
         this.state = state;
@@ -67,6 +72,26 @@ export class ObjectManager {
     }
 
 
+    private updateSpecialColliders(stage : Stage | undefined, camera : Camera, event : ProgramEvent) : void {
+
+        for (let i : number = 0; i < this.specialColliders.length; ++ i) {
+
+            const o : SpecialCollider = this.specialColliders[i];
+            o.cameraCheck(camera, event);
+            o.update(camera, event);
+            stage?.objectCollision(o, camera, event);
+            o.playerCollision?.(this.player!, camera, event);
+
+            /*
+            if (!o.doesExist()) {
+
+                this.enemies.splice(i, 1);
+            }
+            */
+        }
+    }
+
+
     private drawCoins(canvas : Canvas, assets : Assets) : void {
 
         const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
@@ -86,11 +111,22 @@ export class ObjectManager {
         }
     }
 
+
+    private drawSpecialColliders(canvas : Canvas, assets : Assets) : void {
+
+        const bmp : Bitmap | undefined = assets.getBitmap("special_colliders");
+        for (const o of this.specialColliders) {
+            
+            o.draw(canvas, assets, bmp);
+        }
+    }
+
     
     private drawObjects(canvas : Canvas, assets : Assets) : void {
 
         this.player?.preDraw(canvas, assets);
 
+        this.drawSpecialColliders(canvas, assets);
         this.drawCoins(canvas, assets);
         this.drawEnemies(canvas, assets);
         this.player?.draw(canvas, assets);
@@ -122,6 +158,11 @@ export class ObjectManager {
 
                 this.coins.push(new Coin(dx, dy, value - 2));
                 break;
+            
+            // Spring
+            case 4:
+                this.specialColliders.push(new Spring(dx, dy, Direction.Up));
+                break;
 
             default:
 
@@ -148,6 +189,7 @@ export class ObjectManager {
     
         this.updateCoins(camera, event);
         this.updateEnemies(stage, camera, event);
+        this.updateSpecialColliders(stage, camera, event);
         this.flyingText.update(camera, event);
     }
 

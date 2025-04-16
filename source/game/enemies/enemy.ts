@@ -1,16 +1,10 @@
 import { Vector } from "../../common/vector.js";
-import { Assets, InputState, ProgramEvent } from "../../core/interface.js";
+import { Assets, ProgramEvent } from "../../core/interface.js";
 import { Canvas, Bitmap, Flip } from "../../gfx/interface.js";
 import { CollisionObject } from "../collisionobject.js";
 import { AnimatedSprite } from "../../gfx/sprite.js";
 import { Camera } from "../camera.js";
-import { ObjectGenerator } from "../objectgenerator.js";
-import { DustParticle } from "../dustparticle.js";
 import { Rectangle } from "../../common/rectangle.js";
-import { GameState } from "../gamestate.js";
-import { Stage } from "../stage.js";
-import { FlyingText } from "../flyingtext.js";
-import { RGBA } from "../../common/rgba.js";
 import { Player } from "../player.js";
 
 
