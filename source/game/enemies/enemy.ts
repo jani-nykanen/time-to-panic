@@ -46,7 +46,7 @@ export class Enemy extends CollisionObject {
 
     private checkBounce(player : Player, event : ProgramEvent) : boolean {
 
-        const SPEED_EPS : number = -0.5;
+        const SPEED_THRESHOLD : number = -0.5;
         const NEAR_MARGIN : number = 2;
         const FAR_MARGIN : number = 8;
         const EXTRA_WIDTH : number = 8;
@@ -54,7 +54,7 @@ export class Enemy extends CollisionObject {
         const BOUNCE_SPEED : number = 3.0;
 
         const yspeed : number = player.getSpeed().y;
-        if (yspeed < SPEED_EPS) {
+        if (yspeed < SPEED_THRESHOLD) {
 
             return false;
         }

@@ -21,11 +21,11 @@ export class Apple extends Enemy {
 
     constructor(x : number, y : number) {
 
-        super(x, y + 1);
+        super(x, y - 3);
 
         this.sprite.setFrame(3, 1);
 
-        this.collisionBox = new Rectangle(0, 1, 4, 17);
+        this.collisionBox = new Rectangle(0, 2, 4, 16);
         this.hitbox = new Rectangle(0, 0, 14, 12);
 
         this.friction.y = 0.15;

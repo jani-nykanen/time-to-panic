@@ -48,6 +48,7 @@ export class RenderLayer {
 
         canvas.beginSpriteBatching(bmp);
         for (let layer : number = 0; layer < this.layers.length; ++ layer) {
+            
             for (let y : number = starty; y < endy; ++ y) {
 
                 for (let x : number = startx; x < endx; ++ x) {
