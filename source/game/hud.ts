@@ -34,7 +34,7 @@ export class HUD {
         canvas.fillRect(0, canvas.height - 14, canvas.width, 14);
 
         const balanceStr : string = "BALANCE: ";
-        const moneyStr : string = String(this.state.money);
+        const moneyStr : string = String(Math.round(this.state.money));
         const finalMoneyStr : string = "$" + (moneyStr.length > DIGIT_COUNT ? 
             moneyStr : 
             "0".repeat(DIGIT_COUNT - moneyStr.length) + moneyStr);
@@ -46,17 +46,31 @@ export class HUD {
 
             canvas.moveTo(i*SHADOW_OFFSET, i*SHADOW_OFFSET);
 
+            
+            const magnitude : number = this.state.getMagnitude();
+            const scale : number = 1.0 + 
+                0.25*Math.abs(magnitude)*Math.sin(this.state.getMoneyChangeTimer()*Math.PI);
+
             if (i == 1) {
 
                 canvas.setColor(0, 0, 0, SHADOW_ALPHA);
             }
             else {
 
-                canvas.setColor(216, 255, 160);
+                if (magnitude < 0) {
+
+                    canvas.setColor(255, 143, 36);
+                }
+                else {
+                
+                    canvas.setColor(216, 255, 160);
+                }
             }
+
             canvas.drawText(bmpFontOutlines, finalMoneyStr, 
-                leftx + balanceStr.length*9, canvas.height - 15, 
-                -7, 0, Align.Left);
+                leftx + balanceStr.length*9 - (scale - 1.0)*balanceStr.length*5/2.0, 
+                canvas.height - 15 - (scale - 1.0)*6, 
+                -7, 0, Align.Left, scale, scale);
 
             if (i == 0) {
 

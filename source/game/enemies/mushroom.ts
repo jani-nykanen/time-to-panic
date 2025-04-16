@@ -6,7 +6,7 @@ import { Enemy } from "./enemy.js";
 
 
 const GRAVITY : number = 2.5;
-const JUMP_TIME : number = 30;
+const JUMP_TIME : number = 45;
 
 
 export class Mushroom extends Enemy {

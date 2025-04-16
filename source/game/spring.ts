@@ -74,6 +74,11 @@ export class Spring extends SpecialCollider {
 
     public playerCollision(player : Player, camera : Camera, event : ProgramEvent) : void {
         
+        if (!this.isActive()) {
+
+            return;
+        }
+
         if (this.direction == Direction.Up) {
 
             this.checkUpSpring(player, event);

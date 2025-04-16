@@ -22,7 +22,7 @@ export class GameScene implements Scene {
 
     constructor(event : ProgramEvent)  {
 
-        this.state = new GameState(1000, 10);
+        this.state = new GameState(100, 60);
         this.objects = new ObjectManager(this.state);
         this.camera = new Camera(0, 0, event);
         this.background = new Background(1);

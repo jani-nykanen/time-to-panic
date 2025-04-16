@@ -12,6 +12,7 @@ import { getEnemyByIndex } from "./enemies/index.js";
 import { SpecialCollider } from "./specialcollider.js";
 import { Spring } from "./spring.js";
 import { Direction } from "./direction.js";
+import { MovingPlatform } from "./movingplatform.js";
 
 
 export class ObjectManager {
@@ -92,22 +93,22 @@ export class ObjectManager {
     }
 
 
-    private drawCoins(canvas : Canvas, assets : Assets) : void {
+    private drawCoins(canvas : Canvas, assets : Assets, shadowLayer : boolean) : void {
 
         const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
         for (const c of this.coins) {
             
-            c.draw(canvas, assets, bmpCoin);
+            c.draw(canvas, assets, bmpCoin, shadowLayer);
         }
     }
 
 
-    private drawEnemies(canvas : Canvas, assets : Assets) : void {
+    private drawEnemies(canvas : Canvas, assets : Assets, shadowLayer : boolean) : void {
 
         const bmpEnemies : Bitmap | undefined = assets.getBitmap("enemies");
         for (const e of this.enemies) {
             
-            e.draw(canvas, assets, bmpEnemies);
+            e.draw(canvas, assets, bmpEnemies, shadowLayer);
         }
     }
 
@@ -122,14 +123,14 @@ export class ObjectManager {
     }
 
     
-    private drawObjects(canvas : Canvas, assets : Assets) : void {
+    private drawObjects(canvas : Canvas, assets : Assets, shadowLayer : boolean) : void {
 
         this.player?.preDraw(canvas, assets);
 
         this.drawSpecialColliders(canvas, assets);
-        this.drawCoins(canvas, assets);
-        this.drawEnemies(canvas, assets);
-        this.player?.draw(canvas, assets);
+        this.drawCoins(canvas, assets, shadowLayer);
+        this.drawEnemies(canvas, assets, shadowLayer);
+        this.player?.draw(canvas, assets, undefined, shadowLayer);
     }
 
 
@@ -162,6 +163,12 @@ export class ObjectManager {
             // Spring
             case 4:
                 this.specialColliders.push(new Spring(dx, dy, Direction.Up));
+                break;
+
+            // Vertical platform
+            case 5:
+            case 6:
+                this.specialColliders.push(new MovingPlatform(dx, dy, value == 6));
                 break;
 
             default:
@@ -197,13 +204,13 @@ export class ObjectManager {
     public drawShadowLayer(canvas : Canvas, assets : Assets, shadowAlpha : number = 0.25) : void {
 
         canvas.setColor(0, 0, 0, shadowAlpha);
-        this.drawObjects(canvas, assets);
+        this.drawObjects(canvas, assets, true);
     }
 
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
-        this.drawObjects(canvas, assets);
+        this.drawObjects(canvas, assets, false);
 
         this.flyingText.draw(canvas, assets, assets.getBitmap("font_outlines"));
     }
@@ -219,6 +226,11 @@ export class ObjectManager {
         for (const e of this.enemies) {
 
             e.cameraCheck(camera, event);
+        }
+
+        for (const o of this.specialColliders) {
+
+            o.cameraCheck(camera, event);
         }
     }
 }

@@ -123,7 +123,7 @@ export class Enemy extends CollisionObject {
     }
 
 
-    protected updateAI?(event : ProgramEvent) : void;
+    protected updateAI?(event : ProgramEvent, camera? : Camera) : void;
 
 
     protected updateEvent(camera : Camera, event : ProgramEvent) : void {
@@ -136,8 +136,7 @@ export class Enemy extends CollisionObject {
             this.bounceTimer -= BOUNCE_ANIM_SPEED*event.tick;
         }
 
-        this.updateAI?.(event);
-        
+        this.updateAI?.(event, camera);
 
         const left : number = Math.floor(this.pos.x/camera.width)*camera.width;
         const right : number = left + camera.width;
@@ -174,7 +173,8 @@ export class Enemy extends CollisionObject {
     }
 
 
-    public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
+    public draw(canvas : Canvas, assets : Assets | undefined, 
+        bmp : Bitmap | undefined = undefined, shadowLayer : boolean = false) : void {
         
         if (!this.exist || !this.inCamera) {
 
@@ -218,7 +218,7 @@ export class Enemy extends CollisionObject {
 
         this.sprite.draw(canvas, bmp, dx, dy, this.flip, dw, dh);
 
-        if (this.bounceTimer > 0) {
+        if (this.bounceTimer > 0 && !shadowLayer) {
 
             this.drawStars(canvas, bmp);
         }

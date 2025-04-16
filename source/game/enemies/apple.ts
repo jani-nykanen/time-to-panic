@@ -2,6 +2,7 @@ import { Rectangle } from "../../common/rectangle.js";
 import { Vector } from "../../common/vector.js";
 import { ProgramEvent } from "../../core/interface.js";
 import { Flip } from "../../gfx/interface.js";
+import { Camera } from "../camera.js";
 import { Player } from "../player.js";
 import { Enemy } from "./enemy.js";
 
@@ -17,6 +18,8 @@ export class Apple extends Enemy {
 
     private waitTimer : number = 0;
     private mode : number = 0;
+
+    private startShaking : boolean = false;
 
 
     constructor(x : number, y : number) {
@@ -41,6 +44,8 @@ export class Apple extends Enemy {
 
             this.speedTarget.zero();
 
+            this.startShaking = true;
+
             // event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
 
             // this.shakeEvent?.(30, 2);
@@ -57,7 +62,7 @@ export class Apple extends Enemy {
 
     protected playerEvent(player : Player, event : ProgramEvent) : void {
         
-        const DROP_ACTIVATE_DISTANCE : number = 32;
+        const DROP_ACTIVATE_DISTANCE : number = 40;
 
         const ppos : Vector = player.getPosition();
         
@@ -70,9 +75,31 @@ export class Apple extends Enemy {
     }
 
 
-    protected updateAI(event : ProgramEvent) : void {
+    protected bounceEvent(event : ProgramEvent) : void {
+
+        if (this.mode == 3) {
+
+            this.speed.y = 0.0;
+            this.speedTarget.y = 0.0;
+        }
+    }
+
+
+    protected updateAI(event : ProgramEvent, camera? : Camera) : void {
         
         this.sprite.setFrame(3 + this.mode, 1);
+
+        // A lazy workaround
+        if (this.startShaking) {
+
+            camera?.shake(4, 45);
+            this.startShaking = false;
+        }
+
+        if (this.bounceTimer > 0) {
+
+            return;
+        }
 
         if (this.mode == 2) {
 

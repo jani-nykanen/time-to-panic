@@ -11,6 +11,7 @@ import { GameState } from "./gamestate.js";
 import { Stage } from "./stage.js";
 import { FlyingText } from "./flyingtext.js";
 import { RGBA } from "../common/rgba.js";
+import { GameObject } from "./gameobject.js";
 
 
 const RUN_TARGET_SPEED : number = 2.0;
@@ -256,11 +257,12 @@ export class Player extends CollisionObject {
 
             this.dustTimer -= DUST_TIME;
 
-            this.dustGenerator.next().spawn(
-                this.pos.x + xoff,
+            const o : DustParticle = this.dustGenerator.next();
+            o.spawn(this.pos.x + xoff,
                 this.pos.y + yoff,
                 0.0, 0.0,
                 this.doubleJumping ? 1 : 0);
+            o.setReferenceObject(this.referenceObject);
         }
     }
 
@@ -451,7 +453,8 @@ export class Player extends CollisionObject {
     }
 
 
-    public draw(canvas: Canvas, assets : Assets) : void {
+    public draw(canvas: Canvas, assets : Assets,
+        bmp : Bitmap | undefined = undefined, shadowLayer : boolean = false) : void {
         
         if (!this.exist) {
 
@@ -460,6 +463,11 @@ export class Player extends CollisionObject {
 
         const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
         if (this.dying) {
+
+            if (shadowLayer) {
+
+                return;
+            }
 
             this.drawDeath(canvas, bmpPlayer);
             return;
@@ -502,7 +510,7 @@ export class Player extends CollisionObject {
     
     public makeDie(event : ProgramEvent) : void {
 
-        const DEATH_PENALTY : number = 100;
+        const DEATH_PENALTY : number = 10;
 
         this.dying = true;
         this.deathTimer = 0.0;

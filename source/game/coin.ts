@@ -11,7 +11,7 @@ import { GameObject } from "./gameobject.js";
 import { Player } from "./player.js";
 
 
-const MONEY_BONUS : number[] = [50, 100];
+const MONEY_BONUS : number[] = [5, 10];
 
 
 export class Coin extends GameObject {
@@ -82,9 +82,14 @@ export class Coin extends GameObject {
     } 
     
 
-    public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined) : void {
+    public draw(canvas : Canvas, assets : Assets | undefined, bmp : Bitmap | undefined, shadowLayer : boolean = false) : void {
         
         if (!this.exist) {
+
+            return;
+        }
+
+        if (this.dying && shadowLayer) {
 
             return;
         }
