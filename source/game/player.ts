@@ -12,6 +12,7 @@ import { Stage } from "./stage.js";
 import { FlyingText } from "./flyingtext.js";
 import { RGBA } from "../common/rgba.js";
 import { GameObject } from "./gameobject.js";
+import { clamp } from "../common/mathutil.js";
 
 
 const RUN_TARGET_SPEED : number = 2.0;
@@ -141,7 +142,7 @@ export class Player extends CollisionObject {
             return;
         }
 
-        const t : number = Math.abs(this.speed.x/2.0);
+        const t : number = clamp(Math.abs(this.speed.x/2.0), 0, 1);
         this.friction.x = BASE_FRICTION*(1.0 - Math.sqrt(t)*0.90);
     }
 
@@ -526,5 +527,12 @@ export class Player extends CollisionObject {
         this.speed.y = -speed;
         this.canDoubleJump = true;
         this.doubleJumping = false;
+    }
+
+
+    public launch(speedx : number, speedy : number) : void {
+
+        this.speed.x = speedx;
+        this.speed.y = speedy;
     }
 }

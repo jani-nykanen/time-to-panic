@@ -14,6 +14,8 @@ const SHIFT_X : number[] = [4, 0, -4, 0];
 const SHIFT_Y : number[] = [4, 0, 4, 8];
 const SRCY_LOOKUP : number[] = [0, 1, 0, 2];
 
+const LAUNCH_SPEED : number[] = [4.0, -6.0, -4.0, 6.0];
+
 
 export class Spring extends SpecialCollider {
 
@@ -43,8 +45,6 @@ export class Spring extends SpecialCollider {
         const EXTRA_WIDTH : number = 8;
         const LEVEL_OFF : number = 2;
 
-        const BOUNCE_SPEED : number = 6.0;
-
         const yspeed : number = player.getSpeed().y;
         if (yspeed < SPEED_THRESHOLD) {
 
@@ -70,10 +70,28 @@ export class Spring extends SpecialCollider {
             return false;
         }
 
-        player.makeJump(BOUNCE_SPEED, event);
+        const bounceSpeed : number = -(LAUNCH_SPEED[this.direction - 1] ?? 0.0);
+        player.makeJump(bounceSpeed, event);
         this.bounceTimer = 1.0;
 
         return true;
+    }
+
+
+    private checkOtherSpring(player : Player, event : ProgramEvent) : void {
+
+        if (!player.overlayObject(this)) {
+
+            return;
+        }
+
+        const baseSpeed : number = LAUNCH_SPEED[this.direction - 1] ?? 0;
+        const horizontal : boolean = this.direction == Direction.Right || this.direction == Direction.Left;
+        const speedx : number = horizontal ? baseSpeed : 0.0;
+        const speedy  : number = !horizontal ? baseSpeed : 0.0;
+
+        player.launch(speedx, speedy);
+        this.bounceTimer = 1.0;
     }
 
 
@@ -89,6 +107,7 @@ export class Spring extends SpecialCollider {
             this.checkUpSpring(player, event);
             return;
         }
+        this.checkOtherSpring(player, event);
     }
 
 
