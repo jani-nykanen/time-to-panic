@@ -158,7 +158,7 @@ export class Player extends CollisionObject {
             return;
         }
 
-        this.bounceFactor.x = (Math.abs(this.speed.x) - 1.0)*BASE_FACTOR;
+        this.bounceFactor.x = clamp((Math.abs(this.speed.x) - THRESHOLD)*BASE_FACTOR, 0, 1.0);
     }
 
 
@@ -527,12 +527,26 @@ export class Player extends CollisionObject {
         this.speed.y = -speed;
         this.canDoubleJump = true;
         this.doubleJumping = false;
+
+        this.jumpTimer = 0;
     }
 
 
-    public launch(speedx : number, speedy : number) : void {
+    public launch(speedx : number, speedy : number, 
+        stopJump : boolean = false, enableDoubleJump : boolean = false) : void {
 
         this.speed.x = speedx;
         this.speed.y = speedy;
+
+        if (stopJump) {
+
+            this.jumpTimer = 0;
+        }
+
+        if (enableDoubleJump) {
+
+            this.canDoubleJump = true;
+        this.doubleJumping = false;
+        }
     }
 }

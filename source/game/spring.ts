@@ -90,7 +90,7 @@ export class Spring extends SpecialCollider {
         const speedx : number = horizontal ? baseSpeed : 0.0;
         const speedy  : number = !horizontal ? baseSpeed : 0.0;
 
-        player.launch(speedx, speedy);
+        player.launch(speedx, speedy, this.direction == Direction.Down);
         this.bounceTimer = 1.0;
     }
 

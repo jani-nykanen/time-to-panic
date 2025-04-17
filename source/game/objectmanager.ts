@@ -13,6 +13,7 @@ import { SpecialCollider } from "./specialcollider.js";
 import { Spring } from "./spring.js";
 import { Direction } from "./direction.js";
 import { MovingPlatform } from "./movingplatform.js";
+import { Bubble } from "./bubble.js";
 
 
 export class ObjectManager {
@@ -125,15 +126,13 @@ export class ObjectManager {
 
         const bmp : Bitmap | undefined = assets.getBitmap("special_colliders");
 
-        // NOTE: at the moment rotations only work with sprite batching,
-        // didn't have time to implement them without.
-        canvas.beginSpriteBatching(bmp);
+        // canvas.beginSpriteBatching(bmp);
         for (const o of this.specialColliders) {
             
             o.draw(canvas, assets, bmp);
         }
-        canvas.endSpriteBatching();
-        canvas.drawSpriteBatch();
+        // canvas.endSpriteBatching();
+        // canvas.drawSpriteBatch();
     }
 
     
@@ -192,6 +191,12 @@ export class ObjectManager {
             case 5:
             case 6:
                 this.specialColliders.push(new MovingPlatform(dx, dy, value == 6));
+                break;
+
+            // Bubble
+            case 10:
+
+                this.specialColliders.push(new Bubble(dx, dy));
                 break;
 
             default:

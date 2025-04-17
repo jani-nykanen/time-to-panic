@@ -170,6 +170,12 @@ export class GameObject implements ExistingObject {
     }
 
 
+    public directionTo(o : GameObject) : Vector {
+
+        return Vector.direction(this.pos, o.pos);
+    }
+
+
     public setSpeed(speedx : number, speedy : number) : void {
 
         this.speed.x = speedx;
