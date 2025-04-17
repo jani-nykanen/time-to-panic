@@ -22,6 +22,9 @@ export class Enemy extends CollisionObject {
     protected bounceTimer : number = 0;
     protected starPos : Vector;
 
+    protected canBeBounced : boolean = true;
+    protected bounceAnimation : boolean = true;
+
     protected initialPos : Vector;
 
 
@@ -161,7 +164,7 @@ export class Enemy extends CollisionObject {
 
         this.playerEvent?.(player, event);
 
-        if (this.checkBounce(player, event)) {
+        if (this.canBeBounced && this.checkBounce(player, event)) {
 
             return;
         }
@@ -185,7 +188,7 @@ export class Enemy extends CollisionObject {
         let dh : number = this.sprite.height;
         let correctionShift : number = 0;
 
-        if (this.bounceTimer > 0) {
+        if (this.bounceTimer > 0 && this.bounceAnimation) {
 
             if (this.bounceTimer > 0.5) {
 

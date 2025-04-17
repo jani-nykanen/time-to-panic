@@ -134,7 +134,7 @@ export class ObjectManager {
     }
 
 
-    public init(stage : Stage | undefined, event : ProgramEvent) : void {
+    public init(stage : Stage | undefined, camera : Camera, event : ProgramEvent) : void {
 
         const ENEMY_START_INDEX : number = 33;
 
@@ -149,6 +149,7 @@ export class ObjectManager {
             case 1:
 
                 this.player = new Player(dx, dy, this.state, this.flyingText);
+                camera.focusTo(this.player?.getPosition());
                 break;
 
             // Coin

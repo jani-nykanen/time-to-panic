@@ -3,6 +3,7 @@ import { Mushroom } from "./mushroom.js";
 import { Bat } from "./bat.js";
 import { Duck } from "./duck.js";
 import { Apple } from "./apple.js";
+import { Spikeball } from "./spikeball.js";
 
 
 export const getEnemyByIndex = (index : number) : Function => [
@@ -11,6 +12,7 @@ export const getEnemyByIndex = (index : number) : Function => [
     Mushroom,
     Bat,
     Duck,
-    Apple
+    Apple,
+    Spikeball
 
 ][index] ?? Walker;

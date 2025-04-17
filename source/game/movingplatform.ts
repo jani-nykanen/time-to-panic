@@ -22,7 +22,7 @@ export class MovingPlatform extends SpecialCollider {
 
     constructor(x : number, y : number, horizontal : boolean = false) {
 
-        super(x, y);
+        super(x, y - 3);
         
         this.horizontal = horizontal;
 
@@ -31,12 +31,12 @@ export class MovingPlatform extends SpecialCollider {
         if (horizontal) {
 
             this.collisionBox = new Rectangle(0, 0, 48, 2);
-            this.speedTarget.x = H_MOVE_SPEED*(((x/16) |0) == 0 ? 1 : -1);
+            this.speedTarget.x = H_MOVE_SPEED*(((x/16) |0) % 2 == 0 ? 1 : -1);
         }
         else {
 
             this.collisionBox = new Rectangle(0, 0, 16, 48);
-            this.speedTarget.y = V_MOVE_SPEED*(((y/16) |0) == 0 ? 1 : -1);
+            this.speedTarget.y = V_MOVE_SPEED*(((y/16) |0) % 2 == 0 ? 1 : -1);
         }
     }
 

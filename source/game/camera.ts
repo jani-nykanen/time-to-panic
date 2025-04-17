@@ -1,6 +1,7 @@
 import { Vector } from "../common/vector.js";
 import { ProgramEvent} from "../core/interface.js";
 import { Canvas } from "../gfx/interface.js";
+import { GameObject } from "./gameobject.js";
 
 
 export class Camera {
@@ -161,5 +162,14 @@ export class Camera {
 
         this.shakeAmount = amount;
         this.shakeTimer = time;
+    }
+
+
+    public focusTo(target : Vector) : void {
+
+        this.pos.x = Math.floor((target.x)/this.width)*this.width;
+        this.pos.y = Math.floor((target.y)/this.height)*this.height;
+
+        this.target = this.pos.clone();
     }
 }

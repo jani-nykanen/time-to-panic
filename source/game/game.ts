@@ -56,7 +56,7 @@ export class GameScene implements Scene {
         this.stage = new Stage(
             event.assets.getTilemap("level1"),
             event.assets.getTilemap("collisions1"));
-        this.objects.init(this.stage, event);
+        this.objects.init(this.stage, this.camera, event);
         this.objects.initialCameraCheck(this.camera, event);
     }
 
