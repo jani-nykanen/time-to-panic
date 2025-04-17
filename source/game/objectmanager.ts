@@ -65,6 +65,14 @@ export class ObjectManager {
             stage?.objectCollision(e, camera, event);
             e.playerCollision(this.player!, event);
 
+            if (e.isActive() && e.doesCheckEnemyCollisions()) {
+
+                for (let j : number = i + 1; j < this.enemies.length; ++ j) {
+
+                    e.enemyCollision(this.enemies[j], event);
+                }
+            }
+
             if (!e.doesExist()) {
 
                 this.enemies.splice(i, 1);
@@ -116,10 +124,16 @@ export class ObjectManager {
     private drawSpecialColliders(canvas : Canvas, assets : Assets) : void {
 
         const bmp : Bitmap | undefined = assets.getBitmap("special_colliders");
+
+        // NOTE: at the moment rotations only work with sprite batching,
+        // didn't have time to implement them without.
+        canvas.beginSpriteBatching(bmp);
         for (const o of this.specialColliders) {
             
             o.draw(canvas, assets, bmp);
         }
+        canvas.endSpriteBatching();
+        canvas.drawSpriteBatch();
     }
 
     
@@ -135,6 +149,11 @@ export class ObjectManager {
 
 
     public init(stage : Stage | undefined, camera : Camera, event : ProgramEvent) : void {
+
+        const SPRING_LOOKUP : Direction[] = [
+            Direction.Up, 
+            Direction.None, Direction.None, 
+            Direction.Right, Direction.Left, Direction.Down]; 
 
         const ENEMY_START_INDEX : number = 33;
 
@@ -163,7 +182,10 @@ export class ObjectManager {
             
             // Spring
             case 4:
-                this.specialColliders.push(new Spring(dx, dy, Direction.Up));
+            case 7:
+            case 8:
+            case 9:
+                this.specialColliders.push(new Spring(dx, dy, SPRING_LOOKUP[value - 4] ?? Direction.Up));
                 break;
 
             // Vertical platform

@@ -98,8 +98,7 @@ export interface Canvas {
         dx? : number, dy? : number, 
         sx? : number, sy? : number,
         sw? : number, sh? : number,
-        dw? : number, dh? : number,
-        rotation? : number, center? : Vector) : void;
+        dw? : number, dh? : number) : void;
     drawText(font : Bitmap | undefined, text : string, 
         dx : number, dy : number, xoff? : number, yoff? : number, 
         align? : Align, scalex? : number, scaley? : number) : void;

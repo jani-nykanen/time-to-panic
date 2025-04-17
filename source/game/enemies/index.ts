@@ -4,6 +4,7 @@ import { Bat } from "./bat.js";
 import { Duck } from "./duck.js";
 import { Apple } from "./apple.js";
 import { Spikeball } from "./spikeball.js";
+import { Rock } from "./rock.js";
 
 
 export const getEnemyByIndex = (index : number) : Function => [
@@ -13,6 +14,7 @@ export const getEnemyByIndex = (index : number) : Function => [
     Bat,
     Duck,
     Apple,
-    Spikeball
+    Spikeball,
+    Rock
 
 ][index] ?? Walker;

@@ -10,6 +10,11 @@ import { Direction } from "./direction.js";
 import { clamp } from "../common/mathutil.js";
 
 
+const SHIFT_X : number[] = [4, 0, -4, 0];
+const SHIFT_Y : number[] = [4, 0, 4, 8];
+const SRCY_LOOKUP : number[] = [0, 1, 0, 2];
+
+
 export class Spring extends SpecialCollider {
 
 
@@ -105,16 +110,18 @@ export class Spring extends SpecialCollider {
             return;
         }
 
-        const dx : number = this.pos.x - 12;
-        const dy : number = this.pos.y - 16;
+        const dx : number = this.pos.x - 12 + (SHIFT_X[this.direction - 1] ?? 0);
+        const dy : number = this.pos.y - 16 + (SHIFT_Y[this.direction - 1] ?? 0);
 
         let sx : number = 0;
         if (this.bounceTimer > 0) {
 
             sx = clamp(1 + Math.floor((1.0 - this.bounceTimer)*3), 1, 3)*24;
         }
+        const sy : number = SRCY_LOOKUP[this.direction - 1] ?? 0;
+        const flip : Flip = this.direction == Direction.Left ? Flip.Horizontal : Flip.None;
 
-        canvas.drawBitmap(bmp, Flip.None, dx, dy, sx, 0, 24, 24);
+        canvas.drawBitmap(bmp, flip, dx, dy, sx, sy*24, 24, 24, 24, 24);
     }
 }
 

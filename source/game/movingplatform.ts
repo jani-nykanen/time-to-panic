@@ -35,7 +35,7 @@ export class MovingPlatform extends SpecialCollider {
         }
         else {
 
-            this.collisionBox = new Rectangle(0, 0, 16, 48);
+            this.collisionBox = new Rectangle(0, 0, 48, 48);
             this.speedTarget.y = V_MOVE_SPEED*(((y/16) |0) % 2 == 0 ? 1 : -1);
         }
     }
@@ -102,7 +102,7 @@ export class MovingPlatform extends SpecialCollider {
         const dx : number = this.pos.x - 24;
         const dy : number = this.pos.y - 5;
 
-        canvas.drawBitmap(bmp, Flip.None, dx, dy, 0, 24, 48, 10);
+        canvas.drawBitmap(bmp, Flip.None, dx, dy, 0, 72, 48, 10);
     }
 }
 

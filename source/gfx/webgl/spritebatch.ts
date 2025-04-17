@@ -3,23 +3,6 @@ import { Vector } from "../../common/vector.js";
 import { WebGLMesh } from "./mesh.js";
 
 
-const rotatePoint = (p : Vector, shiftx : number, shifty : number, 
-    center : Vector, angle : number) : void => {
-
-    const px : number = p.x - shiftx - center.x;
-    const py : number = p.y - shiftx - center.y;
-
-    const c : number = Math.cos(angle);
-    const s : number = Math.sin(angle);
-
-    const dx : number = px*c - py*s;
-    const dy : number = px*s + py*c;
-
-    p.x = dx + shiftx + center.x;
-    p.y = dy + shifty + center.y;
-}
-
-
 export class SpriteBatch {
 
 
@@ -126,7 +109,7 @@ export class SpriteBatch {
     
     public pushSprite(sx : number, sy : number, sw : number, sh : number,
         dx : number, dy : number, dw : number, dh : number, depth : number,
-        color : RGBA, rotation? : number, center? : Vector) : void {
+        color : RGBA) : void {
 
         const ROTATION_THRESHOLD : number = 0.00001;
 
@@ -140,16 +123,6 @@ export class SpriteBatch {
         const C : Vector = new Vector(dx + dw, dy + dh);
         const D : Vector = new Vector(dx, dy + dh);
 
-        if (rotation !== undefined && Math.abs(rotation) > ROTATION_THRESHOLD) {
-
-            center ??= new Vector(dw/2.0, dh/2.0);
-
-            rotatePoint(A, dx, dy, center, rotation);
-            rotatePoint(B, dx, dy, center, rotation);
-            rotatePoint(C, dx, dy, center, rotation);
-            rotatePoint(D, dx, dy, center, rotation);
-        }
-        
         // Vertices
         let p : number = this.elementPointer*3;
         this.vertexBuffer[p] = A.x;

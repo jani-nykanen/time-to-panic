@@ -250,8 +250,7 @@ export class WebGLCanvas implements Canvas {
         dx : number = 0.0, dy : number = 0.0, 
         sx : number = 0.0, sy : number = 0.0, 
         sw : number = bmp?.width ?? 0, sh : number = bmp?.height ?? 0, 
-        dw : number = sw, dh : number = sh,
-        rotation? : number, center? : Vector) : void {
+        dw : number = sw, dh : number = sh) : void {
         
         bmp ??= this.batchTexture;
         if (bmp === undefined) {
@@ -290,7 +289,7 @@ export class WebGLCanvas implements Canvas {
         if (this.batchingEnabled) {
 
             this.batch.pushSprite(sx, sy, sw, sh, dx, dy, dw, dh, this.depthValue,
-                this.activeColor, rotation, center);
+                this.activeColor);
             return;
         }
 

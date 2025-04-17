@@ -27,6 +27,10 @@ export class Enemy extends CollisionObject {
 
     protected initialPos : Vector;
 
+    protected canBeMoved : boolean = true;
+    protected radius : number = 12;
+    protected checkEnemyCollisions : boolean = false;
+
 
     constructor(x : number, y : number) {
 
@@ -87,6 +91,8 @@ export class Enemy extends CollisionObject {
         this.starPos.x = player.getPosition().x;
         this.starPos.y = level;
 
+        this.bounceEvent?.(event, true);
+
         return true;
     }
 
@@ -113,8 +119,10 @@ export class Enemy extends CollisionObject {
     }
 
     
-    protected bounceEvent?(event : ProgramEvent) : void;
+    protected bounceEvent?(event : ProgramEvent, initial? : boolean) : void;
     protected playerEvent?(player : Player, event : ProgramEvent) : void;
+    protected enemyCollisionEvent?(e : Enemy, event : ProgramEvent) : void;
+    protected updateAI?(event : ProgramEvent, camera? : Camera) : void;
 
 
     protected verticalCollisionEvent(dir : -1 | 1, event : ProgramEvent) : void {
@@ -125,17 +133,14 @@ export class Enemy extends CollisionObject {
         }
     }
 
-
-    protected updateAI?(event : ProgramEvent, camera? : Camera) : void;
-
-
+    
     protected updateEvent(camera : Camera, event : ProgramEvent) : void {
         
         const BOUNCE_ANIM_SPEED : number = 1.0/20.0;
 
         if (this.bounceTimer > 0) {
 
-            this.bounceEvent?.(event);
+            this.bounceEvent?.(event, false);
             this.bounceTimer -= BOUNCE_ANIM_SPEED*event.tick;
         }
 
@@ -172,6 +177,44 @@ export class Enemy extends CollisionObject {
         if (this.overlayObject(player)) {
 
             player.makeDie(event);
+        }
+    }
+
+
+    public enemyCollision(enemy : Enemy, event : ProgramEvent) : void {
+
+        if (!this.isActive() || !enemy.isActive() ||
+            !this.checkEnemyCollisions || !enemy.checkEnemyCollisions) {
+
+            return;
+        }
+
+        const dist : number = Vector.distance(enemy.pos, this.pos);
+        const collisionDistance : number = this.radius + enemy.radius;
+
+        if (dist >= collisionDistance) {
+
+            return;
+        }
+            
+
+        const direction : Vector = Vector.direction(enemy.pos, this.pos);
+        const divisor : number = Number(this.canBeMoved) + Number(enemy.canBeMoved);
+
+        if (this.canBeMoved) {
+
+            this.pos.x += direction.x*(collisionDistance - dist)/divisor;
+            this.pos.y += direction.y*(collisionDistance - dist)/divisor;
+
+            this.enemyCollisionEvent(enemy, event);
+        }
+
+        if (enemy.canBeMoved) {
+
+            enemy.pos.x -= direction.x*(collisionDistance - dist)/divisor;
+            enemy.pos.x -= direction.y*(collisionDistance - dist)/divisor;
+
+            enemy.enemyCollisionEvent(this, event);
         }
     }
 
@@ -225,5 +268,11 @@ export class Enemy extends CollisionObject {
 
             this.drawStars(canvas, bmp);
         }
+    }
+
+
+    public doesCheckEnemyCollisions() : boolean {
+
+        return this.checkEnemyCollisions;
     }
 }
