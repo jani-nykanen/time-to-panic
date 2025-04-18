@@ -139,6 +139,7 @@ export interface ProgramEvent {
     get input() : Input;
     get scenes() : SceneManager;
     get audio() : AudioPlayer;
+    get transition() : Transition;
 
     get screenWidth() : number;
     get screenHeight() : number;

@@ -145,7 +145,7 @@ export class ObjectManager {
         this.drawSpecialColliders(canvas, assets);
         this.drawCoins(canvas, assets, shadowLayer);
         this.drawEnemies(canvas, assets, shadowLayer);
-        this.finalBoss.draw(canvas, assets);
+        this.finalBoss.draw(canvas, assets, undefined, shadowLayer);
         this.player?.draw(canvas, assets, undefined, shadowLayer);
     }
 

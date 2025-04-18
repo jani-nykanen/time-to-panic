@@ -54,6 +54,10 @@ export class BaseSceneManager implements SceneManager {
         const param : SceneParameter = this.activeScene?.dispose();
 
         this.activeScene = this.scenes.get(name);
-        this.activeScene?.init?.(param, event)
+        if (this.activeScene === undefined) {
+
+            throw new Error(`Could not find a scene with the name ${name}!`);
+        }
+        this.activeScene.init?.(param, event)
     }
 }

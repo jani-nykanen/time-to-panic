@@ -30,6 +30,7 @@ export class Enemy extends CollisionObject {
     protected canBeMoved : boolean = true;
     protected radius : number = 12;
     protected checkEnemyCollisions : boolean = false;
+    protected harmful : boolean = true;
 
 
     constructor(x : number, y : number) {
@@ -96,28 +97,6 @@ export class Enemy extends CollisionObject {
         return true;
     }
 
-
-    private drawStars(canvas : Canvas, bmp : Bitmap | undefined) : void {
-
-        const MAX_DISTANCE : number = 32;
-        const FLATTEN_Y : number = 0.67;
-
-        const t : number = 1.0 - this.bounceTimer;
-        const s : number = (t*2.0) % 1.0;
-
-        for (let i : number = 0; i < 4; ++ i) {
-
-            const angle : number = Math.PI/4 + i*Math.PI/2;
-
-            const dx : number = this.starPos.x + Math.sin(angle)*t*MAX_DISTANCE;
-            const dy : number = this.starPos.y + Math.cos(angle)*t*MAX_DISTANCE*FLATTEN_Y;
-
-            const sx : number = Math.floor(s*4);
-            
-            canvas.drawBitmap(bmp, Flip.None, dx - 8, dy - 8, 96 + sx*16, 0, 16, 16);
-        }
-    }
-
     
     protected bounceEvent?(event : ProgramEvent, initial? : boolean) : void;
     protected playerEvent?(player : Player, event : ProgramEvent) : void;
@@ -160,6 +139,28 @@ export class Enemy extends CollisionObject {
     }
 
 
+    protected drawStars(canvas : Canvas, bmp : Bitmap | undefined) : void {
+
+        const MAX_DISTANCE : number = 32;
+        const FLATTEN_Y : number = 0.67;
+
+        const t : number = 1.0 - this.bounceTimer;
+        const s : number = (t*2.0) % 1.0;
+
+        for (let i : number = 0; i < 4; ++ i) {
+
+            const angle : number = Math.PI/4 + i*Math.PI/2;
+
+            const dx : number = this.starPos.x + Math.sin(angle)*t*MAX_DISTANCE;
+            const dy : number = this.starPos.y + Math.cos(angle)*t*MAX_DISTANCE*FLATTEN_Y;
+
+            const sx : number = Math.floor(s*4);
+            
+            canvas.drawBitmap(bmp, Flip.None, dx - 8, dy - 8, 96 + sx*16, 0, 16, 16);
+        }
+    }
+
+
     public playerCollision(player : Player, event : ProgramEvent) : void {
 
         if (!this.isActive() || !player.isActive()) {
@@ -174,7 +175,7 @@ export class Enemy extends CollisionObject {
             return;
         }
 
-        if (this.overlayObject(player)) {
+        if (this.harmful && this.overlayObject(player)) {
 
             player.makeDie(event);
         }

@@ -63,6 +63,11 @@ export class GameScene implements Scene {
 
     public update(event : ProgramEvent) : void {
 
+        if (event.transition.isActive()) {
+
+            return;
+        }
+
         this.camera.update(event);
         this.stage?.update(event);
         this.objects.update(this.stage, this.camera, event);
