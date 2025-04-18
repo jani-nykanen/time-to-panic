@@ -64,6 +64,8 @@ export class Bubble extends SpecialCollider {
             player.launch(dir.x*LAUNCH_SPEED_X, dir.y*LAUNCH_SPEED_Y, true, true);
 
             this.sprite.setFrame(1, 3);
+
+            event.audio.playSample(event.assets.getSample("burst"), 0.70);
         }
     }
 

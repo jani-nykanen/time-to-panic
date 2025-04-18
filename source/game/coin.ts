@@ -12,6 +12,8 @@ import { Player } from "./player.js";
 
 
 const MONEY_BONUS : number[] = [5, 10];
+const SAMPLE_NAME : string[] = ["coin", "gem"];
+const SAMPLE_VOLUMES : number[] = [0.65, 0.60];
 
 
 export class Coin extends GameObject {
@@ -42,6 +44,8 @@ export class Coin extends GameObject {
             this.wave += Math.PI;
             this.sprite.setFrame(2, type);
         }
+
+        this.sprite.setFrame(0, this.type);
     }
 
 
@@ -78,6 +82,8 @@ export class Coin extends GameObject {
             this.sprite.setFrame(4, this.type, false);
 
             player.earnMoney(MONEY_BONUS[this.type] ?? 0, this.type, event);
+
+            event.audio.playSample(event.assets.getSample(SAMPLE_NAME[this.type]), SAMPLE_VOLUMES[this.type] ?? 0.60);
         }
     } 
     

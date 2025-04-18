@@ -21,7 +21,18 @@
 
     "samplePath": "assets/audio/",
     "samples": [
-   
+        
+        {"name": "jump", "path": "jump.wav"},
+        {"name": "jump2", "path": "jump2.wav"},
+        {"name": "coin", "path": "coin.wav"},
+        {"name": "gem", "path": "gem.wav"},
+        {"name": "die", "path": "die.wav"},
+        {"name": "shake", "path": "shake.wav"},
+        {"name": "spring", "path": "spring.wav"},
+        {"name": "hit", "path": "hit.wav"},
+        {"name": "burst", "path": "burst.wav"},
+        {"name": "fireball", "path": "fireball.wav"},
+        {"name": "bounce", "path": "bounce.wav"}
     ],
 
     "tilemapPath": "assets/tilemaps/",

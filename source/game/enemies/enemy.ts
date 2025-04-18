@@ -87,6 +87,7 @@ export class Enemy extends CollisionObject {
         }
 
         player.makeJump(BOUNCE_SPEED, event);
+        event.audio.playSample(event.assets.getSample("bounce"), 0.70);
         this.bounceTimer = 1.0;
 
         this.starPos.x = player.getPosition().x;

@@ -8,6 +8,8 @@ const GRAVITY : number = 4.0;
 // "Walking" indeed
 const WALK_SPEED : number = 1.0;
 
+const SAMPLE_VOL : number = 0.80;
+
 
 export class Rock extends Enemy {
 
@@ -47,7 +49,10 @@ export class Rock extends Enemy {
         if (dir == 1) {
 
             this.speed.y = JUMP_SPEED;
+            event.audio.playSample(event.assets.getSample("hit"), SAMPLE_VOL);
         }
+
+        // event.audio.playSample(event.assets.getSample("hit"), SAMPLE_VOL);
     }
 
 
@@ -56,6 +61,8 @@ export class Rock extends Enemy {
         this.direction = -dir;
         this.speedTarget.x = this.direction*WALK_SPEED;
         this.speed.x = this.direction*WALK_SPEED;
+
+       //  event.audio.playSample(event.assets.getSample("hit"), SAMPLE_VOL);
     }
 
 
@@ -65,6 +72,8 @@ export class Rock extends Enemy {
 
         this.speedTarget.x = WALK_SPEED*this.direction;
         this.speed.x = this.speedTarget.x;
+
+        // event.audio.playSample(event.assets.getSample("hit"), SAMPLE_VOL);
     }
 
 

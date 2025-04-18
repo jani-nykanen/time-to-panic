@@ -46,9 +46,7 @@ export class Apple extends Enemy {
 
             this.startShaking = true;
 
-            // event.audio.playSample(event.assets.getSample("thwomp"), 0.50);
-
-            // this.shakeEvent?.(30, 2);
+            event.audio.playSample(event.assets.getSample("shake"), 0.60);
         }
         else if (dir == -1 && this.mode == 3) {
 

@@ -16,6 +16,8 @@ const SRCY_LOOKUP : number[] = [0, 1, 0, 2];
 
 const LAUNCH_SPEED : number[] = [4.0, -6.0, -4.0, 6.0];
 
+const SAMPLE_VOL : number = 0.70;
+
 
 export class Spring extends SpecialCollider {
 
@@ -74,6 +76,8 @@ export class Spring extends SpecialCollider {
         player.makeJump(bounceSpeed, event);
         this.bounceTimer = 1.0;
 
+        event.audio.playSample(event.assets.getSample("spring"), SAMPLE_VOL);
+
         return true;
     }
 
@@ -92,6 +96,8 @@ export class Spring extends SpecialCollider {
 
         player.launch(speedx, speedy, this.direction == Direction.Down);
         this.bounceTimer = 1.0;
+
+        event.audio.playSample(event.assets.getSample("spring"), SAMPLE_VOL);
     }
 
 

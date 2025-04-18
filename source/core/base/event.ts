@@ -59,7 +59,7 @@ export class BaseProgramEvent implements ProgramEvent {
     constructor(audio : AudioPlayer, renderer : Renderer) {
 
         this.input = new BaseInput();
-        this.assets = new BaseAssets(this.audio, renderer);
+        this.assets = new BaseAssets(audio, renderer);
         this.transition = new BaseTransition();
         this.scenes = new BaseSceneManager();
 

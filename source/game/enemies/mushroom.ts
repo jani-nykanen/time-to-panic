@@ -83,6 +83,8 @@ export class Mushroom extends Enemy {
 
                 this.speed.y = JUMP_HEIGHT;
                 this.jumping = true;
+
+                event.audio.playSample(event.assets.getSample("jump2"), 0.40);
             }
             else {
 

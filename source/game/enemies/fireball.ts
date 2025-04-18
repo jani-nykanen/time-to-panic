@@ -50,6 +50,8 @@ export class Fireball extends Enemy {
         
             this.jumping = true;
             this.speed.y = JUMP_SPEED;
+
+            event.audio.playSample(event.assets.getSample("fireball"), 0.80);
         }
     }
 

@@ -79,6 +79,7 @@ export class Player extends CollisionObject {
 
         const JUMP_TIME_BASE : number = 12.0;
         const DOUBLE_JUMP_TIME : number = 8.0;
+        const JUMP_VOL : number = 0.60;
 
         const jumpButton : InputState = event.input.getAction("jump");
         if (jumpButton == InputState.Pressed) {
@@ -88,12 +89,16 @@ export class Player extends CollisionObject {
                 this.jumpTimer = JUMP_TIME_BASE;
                 this.touchGround = false;
                 this.ledgeTimer = 0;
+
+                event.audio.playSample(event.assets.getSample("jump"), JUMP_VOL);
             }
             else if (this.canDoubleJump) {
 
                 this.jumpTimer = DOUBLE_JUMP_TIME;
                 this.canDoubleJump = false;
                 this.doubleJumping = true;
+
+                event.audio.playSample(event.assets.getSample("jump"), JUMP_VOL);
             }
         }
         else if (jumpButton == InputState.Released) {
@@ -519,6 +524,8 @@ export class Player extends CollisionObject {
         this.state.addMoney(-DEATH_PENALTY);
         this.flyingText.next().spawn(
             this.pos.x, this.pos.y - 12, -DEATH_PENALTY, new RGBA(255, 73, 0));
+
+        event.audio.playSample(event.assets.getSample("die"), 0.60);
     }
 
 
