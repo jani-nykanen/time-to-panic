@@ -14,6 +14,7 @@ import { Spring } from "./spring.js";
 import { Direction } from "./direction.js";
 import { MovingPlatform } from "./movingplatform.js";
 import { Bubble } from "./bubble.js";
+import { FinalBoss } from "./enemies/finalboss.js";
 
 
 export class ObjectManager {
@@ -24,6 +25,7 @@ export class ObjectManager {
     private enemies : Enemy[];
     private specialColliders : SpecialCollider[];
     private flyingText : ObjectGenerator<FlyingText>;
+    private finalBoss : FinalBoss | undefined = undefined;
 
     private readonly state : GameState;
 
@@ -143,6 +145,7 @@ export class ObjectManager {
         this.drawSpecialColliders(canvas, assets);
         this.drawCoins(canvas, assets, shadowLayer);
         this.drawEnemies(canvas, assets, shadowLayer);
+        this.finalBoss.draw(canvas, assets);
         this.player?.draw(canvas, assets, undefined, shadowLayer);
     }
 
@@ -198,6 +201,12 @@ export class ObjectManager {
 
                 this.specialColliders.push(new Bubble(dx, dy));
                 break;
+                
+            // Final boss
+            case 11:
+
+                this.finalBoss = new FinalBoss(dx, dy);
+                break;
 
             default:
 
@@ -222,6 +231,14 @@ export class ObjectManager {
         this.player?.stageEvent(camera, stage, event);
         stage?.objectCollision(this.player, camera, event);
     
+        this.finalBoss?.update(camera, event);
+        this.finalBoss?.cameraCheck(camera, event);
+        this.finalBoss?.playerCollision(this.player!, event);
+        if (this.finalBoss !== undefined) {
+        
+            stage.objectCollision(this.finalBoss, camera, event);
+        }
+
         this.updateCoins(camera, event);
         this.updateEnemies(stage, camera, event);
         this.updateSpecialColliders(stage, camera, event);

@@ -10,6 +10,7 @@
         {"name": "star", "path": "star.png"},
         {"name": "sky", "path": "sky.png", "repeatx": true, "repeaty": true},
         {"name": "special_colliders", "path": "special_colliders.png"},
+        {"name": "final_boss", "path": "final_boss.png"},
         
         {"name": "background1", "path": "background1.png"},
         {"name": "tileset1", "path": "tileset1.png"},
