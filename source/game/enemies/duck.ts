@@ -17,7 +17,7 @@ export class Duck extends Enemy {
 
         super(x, y);
 
-        this.direction = ((y/16) | 0) % 2 == 0 ? 1 : -1;
+        this.direction = ((x/16) | 0) % 2 == 0 ? 1 : -1;
         if (this.direction == 1) {
 
             this.wave += Math.PI;
