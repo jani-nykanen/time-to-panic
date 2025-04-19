@@ -19,5 +19,9 @@
     ],
 
 
-    "restart": "Start from the\nbeginning?"
+    "restart": "Start from the\nbeginning?",
+
+
+    "press_space": "Press SPACE or \u0080 to start"
+
 }

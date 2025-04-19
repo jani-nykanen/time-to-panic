@@ -102,7 +102,7 @@ export class Menu {
     public draw(canvas : Canvas, assets : Assets,
         x : number = 0, y : number = 0, yoff : number = 2, 
         drawBox : boolean = true, boxColors : RGBA[] | undefined = undefined,
-        drawShadow : boolean = true, shadowAlpha : number = 0.25, 
+        drawShadow : boolean = true, shadowAlpha : number = 0.50, 
         shadowOffset : number = 2) : void {
 
         const BOX_OFFSET : number = 2;

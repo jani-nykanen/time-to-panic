@@ -113,7 +113,7 @@ const createEquiangularTriangleMesh = (gl : WebGLRenderingContext) : Mesh => {
 
 
 const getShaderTypeFromEffect = (eff : Effect, textured : boolean = true) : ShaderType => 
-    [ShaderType.Textured, 
+    [textured ? ShaderType.Textured : ShaderType.NoTexture, 
      ShaderType.FixedColorTextured, 
      ShaderType.InvertTextured,
      ShaderType.BlackAndWhite,
@@ -242,6 +242,7 @@ export class WebGLCanvas implements Canvas {
         }
 
         this.renderer.setVertexTransform(dx, dy, dz, scalex, scaley, scalez);
+        this.renderer.setFragmenTransform(0, 0, 1, 1);
         this.renderer.drawMesh(mesh)
     }
 

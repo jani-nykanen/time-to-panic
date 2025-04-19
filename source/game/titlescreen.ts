@@ -62,10 +62,16 @@ export class TitleScreenScene implements Scene {
     private rotation : number = 0.0;
     private meshSpiral : Mesh;
 
+    private pressSpaceStr : string = "";
+    private spaceTimer : number = 0.0;
+    private mode : number = 0;
+
 
     constructor(event : ProgramEvent)  {
 
         this.meshSpiral = createSpiralMesh(Math.PI*12, 1.25, 0.10, event);
+
+        this.pressSpaceStr = event.localization?.getItem("press_space")?.[0] ?? "";
     }
 
 
@@ -77,7 +83,8 @@ export class TitleScreenScene implements Scene {
 
     public update(event : ProgramEvent) : void {
 
-        const ROTATION_SPEED : number = Math.PI*2/240.0;
+        const ROTATION_SPEED : number = Math.PI*2/120.0;
+        const PRESS_SPACE_SPEED : number = 1.0/60.0;
 
         this.rotation = (this.rotation + ROTATION_SPEED*event.tick) % (Math.PI*2);
 
@@ -86,14 +93,18 @@ export class TitleScreenScene implements Scene {
             return;
         }
 
-        if (event.input.getAction("start") == InputState.Pressed) {
+        if (this.mode == 0) {
 
-            event.audio.playSample(event.assets.getSample("start"), 0.60);
-            event.transition.activate(true, TransitionType.Circle,
-                1.0/20.0, (event : ProgramEvent) : void => {
+            this.spaceTimer = (this.spaceTimer + PRESS_SPACE_SPEED*event.tick) % 1.0;
+            if (event.input.getAction("start") == InputState.Pressed) {
 
-                    event.scenes.changeScene("game", event);
-                });
+                event.audio.playSample(event.assets.getSample("start"), 0.60);
+                event.transition.activate(true, TransitionType.Circle,
+                    1.0/30.0, (event : ProgramEvent) : void => {
+
+                        event.scenes.changeScene("game", event);
+                    });
+            }
         }
     }
 
@@ -108,7 +119,7 @@ export class TitleScreenScene implements Scene {
         canvas.transform.setTarget(TransformTarget.Model);
         canvas.transform.push();
         canvas.transform.translate(canvas.width/2, canvas.height/2);
-        canvas.transform.rotate(this.rotation);
+        canvas.transform.rotate(-this.rotation);
         canvas.transform.scale(spiralScale, spiralScale);
         canvas.transform.apply();
 
@@ -117,6 +128,13 @@ export class TitleScreenScene implements Scene {
 
         canvas.transform.pop();
         canvas.transform.apply();
+        canvas.setColor();
+
+        const font : Bitmap | undefined = assets.getBitmap("font_outlines");
+        if (this.spaceTimer < 0.5) {
+
+            canvas.drawText(font, this.pressSpaceStr, canvas.width/2, canvas.height - 40, -8, 0, Align.Center);
+        }
     }
 
 

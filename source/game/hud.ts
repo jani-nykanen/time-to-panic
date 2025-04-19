@@ -54,7 +54,7 @@ export class HUD {
 
     public draw(canvas : Canvas, assets : Assets) : void {
 
-        const SHADOW_ALPHA : number = 0.60;
+        // const SHADOW_ALPHA : number = 0.60;
         const DIGIT_COUNT : number = 4;
         const SHADOW_OFFSET : number = 1;
 
@@ -73,20 +73,21 @@ export class HUD {
         const width : number = (balanceStr.length + finalMoneyStr.length)*9;
         const leftx : number = canvas.width/2 - width/2;
 
-        for (let i : number = 1; i >= 0; -- i) {
+        // for (let i : number = 1; i >= 0; -- i) {
 
-            canvas.moveTo(i*SHADOW_OFFSET, i*SHADOW_OFFSET);
+            // canvas.moveTo(i*SHADOW_OFFSET, i*SHADOW_OFFSET);
 
             const magnitude : number = this.state.getMagnitude();
             const scale : number = 1.0 + 
                 0.25*Math.abs(magnitude)*Math.sin(this.state.getMoneyChangeTimer()*Math.PI);
 
+                /*
             if (i == 1) {
 
                 canvas.setColor(0, 0, 0, SHADOW_ALPHA);
             }
             else {
-
+            */
                 if (this.state.money <= 0 || magnitude < 0) {
 
                     canvas.setColor(255, 143, 36);
@@ -95,7 +96,7 @@ export class HUD {
                 
                     canvas.setColor(216, 255, 160);
                 }
-            }
+           // }
 
             if (this.state.money > 0 || this.panicTimer <= 0.5) {
 
@@ -105,14 +106,14 @@ export class HUD {
                     -7, 0, Align.Left, scale, scale);
             }
 
-            if (i == 0) {
+            //if (i == 0) {
 
                 canvas.setColor(255, 255, 216);
-            }
+            //}
             canvas.drawText(bmpFontOutlines, "BALANCE: ", 
                 leftx, canvas.height - 15, 
                 -7, 0, Align.Left);
-        }
+        // }
         canvas.setColor();
     
         if (this.state.money <= 0) {
