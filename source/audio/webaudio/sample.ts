@@ -110,6 +110,8 @@ export class WebAudioSample implements AudioSample {
             
             return;
         }
-        this.gain.gain.setValueAtTime(clamp(this.baseVolume*newVolume, MINIMUM_VOLUME, 1.0), this.ctx.currentTime);
+        this.gain.gain.setValueAtTime(
+            clamp(this.baseVolume*newVolume, MINIMUM_VOLUME, 1.0), 
+            this.ctx.currentTime);
     }
 }

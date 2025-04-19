@@ -9,6 +9,8 @@ export class HUD {
     private state : GameState;
     private balanceText : string = "";
 
+    private panicTimer : number = 0.0;
+
 
     constructor(state : GameState, event : ProgramEvent) {
 
@@ -18,9 +20,35 @@ export class HUD {
     }
 
 
+    private drawPanicText(canvas : Canvas, assets : Assets) : void {
+
+        const bmp : Bitmap | undefined = assets.getBitmap("panic");
+        if (bmp === undefined) {
+
+            return;
+        }
+
+        const alpha : number = 0.5 + 0.25*Math.sin(this.panicTimer*Math.PI*2);
+
+        canvas.setAlpha(alpha);
+        canvas.drawVerticallyWavingBitmap(bmp, canvas.width/2 - bmp.width/2, 
+            canvas.height/2 - bmp.height/2 - 16, 0, 0, bmp.width, bmp.height,
+            Math.PI, 4.0, this.panicTimer*Math.PI*2);
+        canvas.setAlpha();
+    }
+
+
     public update(event : ProgramEvent) : void {
 
-        // Redundant
+        const PANIC_SPEED : number = 1.0/60.0;
+
+        if (this.state.money > 0) {
+
+            this.panicTimer = 0.0;
+            return;
+        }
+
+        this.panicTimer = (this.panicTimer + PANIC_SPEED*event.tick) % 1.0;
     }
 
 
@@ -35,6 +63,7 @@ export class HUD {
         canvas.setColor(0, 0, 0, 0.25);
         canvas.fillRect(0, canvas.height - 14, canvas.width, 14);
 
+
         const balanceStr : string = `${this.balanceText}: `;
         const moneyStr : string = String(Math.round(this.state.money));
         const finalMoneyStr : string = "$" + (moneyStr.length > DIGIT_COUNT ? 
@@ -48,7 +77,6 @@ export class HUD {
 
             canvas.moveTo(i*SHADOW_OFFSET, i*SHADOW_OFFSET);
 
-            
             const magnitude : number = this.state.getMagnitude();
             const scale : number = 1.0 + 
                 0.25*Math.abs(magnitude)*Math.sin(this.state.getMoneyChangeTimer()*Math.PI);
@@ -59,7 +87,7 @@ export class HUD {
             }
             else {
 
-                if (magnitude < 0) {
+                if (this.state.money <= 0 || magnitude < 0) {
 
                     canvas.setColor(255, 143, 36);
                 }
@@ -69,10 +97,13 @@ export class HUD {
                 }
             }
 
-            canvas.drawText(bmpFontOutlines, finalMoneyStr, 
-                leftx + balanceStr.length*9 - (scale - 1.0)*balanceStr.length*5/2.0, 
-                canvas.height - 15 - (scale - 1.0)*6, 
-                -7, 0, Align.Left, scale, scale);
+            if (this.state.money > 0 || this.panicTimer <= 0.5) {
+
+                canvas.drawText(bmpFontOutlines, finalMoneyStr, 
+                    leftx + balanceStr.length*9 - (scale - 1.0)*balanceStr.length*5/2.0, 
+                    canvas.height - 15 - (scale - 1.0)*6, 
+                    -7, 0, Align.Left, scale, scale);
+            }
 
             if (i == 0) {
 
@@ -82,7 +113,11 @@ export class HUD {
                 leftx, canvas.height - 15, 
                 -7, 0, Align.Left);
         }
-
         canvas.setColor();
+    
+        if (this.state.money <= 0) {
+
+            this.drawPanicText(canvas, assets);
+        }
     }
 }

@@ -10,7 +10,7 @@ import { HUD } from "./hud.js";
 import { GameOver } from "./gameover.js";
 
 
-const THEME_VOL : number = 0.60;
+const THEME_VOL : number = 0.70;
 
 
 export class GameScene implements Scene {
@@ -27,7 +27,7 @@ export class GameScene implements Scene {
 
     constructor(event : ProgramEvent)  {
 
-        this.state = new GameState(100, 60);
+        this.state = new GameState(10, 60);
         this.objects = new ObjectManager(this.state);
         this.camera = new Camera(0, 0, event);
         this.background = new Background(1);

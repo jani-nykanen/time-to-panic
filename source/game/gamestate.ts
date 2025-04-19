@@ -24,6 +24,10 @@ export class GameState {
 
         return this.moneyCount;
     }
+    public get moneyTarget() : number {
+
+        return this.moneyCountTarget;
+    }
 
 
     constructor(initialMoney : number, feeRate : number) {

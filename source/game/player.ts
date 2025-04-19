@@ -46,6 +46,7 @@ export class Player extends CollisionObject {
 
     private respawning : boolean = false;
     private deathTimer : number = 0.0;
+    private noMoneyDeath : boolean = false;
 
     public readonly state : GameState;
 
@@ -423,7 +424,7 @@ export class Player extends CollisionObject {
         if (this.deathTimer >= 1.0) {
 
             // No money -> death
-            if (this.state.money <= 0) {
+            if (this.noMoneyDeath) {
 
                 return true;
             }
@@ -526,6 +527,8 @@ export class Player extends CollisionObject {
 
         this.dying = true;
         this.deathTimer = 0.0;
+
+        this.noMoneyDeath = this.state.moneyTarget <= 0;
 
         this.state.addMoney(-DEATH_PENALTY);
         this.flyingText.next().spawn(
