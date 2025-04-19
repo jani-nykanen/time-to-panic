@@ -17,6 +17,8 @@ export class GameState {
 
     private magnitude : number = 0.0;
 
+    private startMoney : number = 0;
+
 
     public get money() : number {
 
@@ -26,6 +28,7 @@ export class GameState {
 
     constructor(initialMoney : number, feeRate : number) {
 
+        this.startMoney = initialMoney;
         this.moneyCount = initialMoney;
         this.moneyCountTarget = initialMoney;
         this.feeRate = feeRate;
@@ -84,5 +87,15 @@ export class GameState {
     public getMagnitude() : number {
 
         return this.magnitude;
+    }
+
+
+    public reset() : void {
+
+        this.moneyChangeTimer = 0.0;
+        this.moneyCount = this.startMoney;
+        this.initialMoneyCount = this.startMoney;
+        this.moneyCountTarget = this.startMoney;
+        this.frameCount = 0;
     }
 }

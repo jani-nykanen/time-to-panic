@@ -26,12 +26,13 @@ export interface AudioPlayer {
     pauseMusic() : void;
     resumeMusic(newVolume? : number) : boolean;
     stopMusic() : void;
+    setMusicTrackVolume(vol : number) : void;
 
-    setSoundVolume(vol : number) : void;
-    setMusicVolume(vol : number) : void;
+    setGlobalSoundVolume(vol : number) : void;
+    setGlobalMusicVolume(vol : number) : void;
 
-    getSoundVolume() : number;
-    getMusicVolume() : number;
+    getGlobalSoundVolume() : number;
+    getGlobalMusicVolume() : number;
 
     decodeSample(sampleData : ArrayBuffer, callback : (s : AudioSample) => any) : void;
 

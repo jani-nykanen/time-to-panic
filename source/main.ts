@@ -16,8 +16,8 @@ const initialEvent = (event : ProgramEvent) : void => {
     event.input.addAction("select", ["Enter", "Space", "KeyZ", "KeyJ"], [0, 7, 9], [0]);
     event.input.addAction("start", ["Enter", "Space", "KeyZ", "KeyJ"], [0, 7, 9], [0]);
 
-    event.audio.setMusicVolume(60);
-    event.audio.setSoundVolume(60);
+    event.audio.setGlobalMusicVolume(60);
+    event.audio.setGlobalSoundVolume(60);
 }
 
 

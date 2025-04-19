@@ -11,6 +11,7 @@
         {"name": "sky", "path": "sky.png", "repeatx": true, "repeaty": true},
         {"name": "special_colliders", "path": "special_colliders.png"},
         {"name": "final_boss", "path": "final_boss.png"},
+        {"name": "gameover", "path": "gameover.png"},
         
         {"name": "background1", "path": "background1.png"},
         {"name": "tileset1", "path": "tileset1.png"},
@@ -32,7 +33,11 @@
         {"name": "hit", "path": "hit.wav"},
         {"name": "burst", "path": "burst.wav"},
         {"name": "fireball", "path": "fireball.wav"},
-        {"name": "bounce", "path": "bounce.wav"}
+        {"name": "bounce", "path": "bounce.wav"},
+        {"name": "start", "path": "start.wav"},
+        {"name": "gameover", "path": "gameover.wav"},
+
+        {"name": "theme", "path": "theme.ogg"}
     ],
 
     "tilemapPath": "assets/tilemaps/",

@@ -1,4 +1,4 @@
-import { Assets, ProgramEvent } from "../core/interface.js";
+import { Assets, ProgramEvent, Transition } from "../core/interface.js";
 import { Bitmap, Canvas } from "../gfx/interface.js";
 import { Camera } from "./camera.js";
 import { ObjectGenerator } from "./objectgenerator.js";
@@ -15,6 +15,8 @@ import { Direction } from "./direction.js";
 import { MovingPlatform } from "./movingplatform.js";
 import { Bubble } from "./bubble.js";
 import { FinalBoss } from "./enemies/finalboss.js";
+import { Vector } from "../common/vector.js";
+import { negMod } from "../common/mathutil.js";
 
 
 export class ObjectManager {
@@ -159,6 +161,13 @@ export class ObjectManager {
 
         const ENEMY_START_INDEX : number = 33;
 
+        this.player = undefined;
+        this.coins = new Array<Coin> ();
+        this.enemies = new Array<Enemy> ();
+        this.specialColliders = new Array<SpecialCollider> ();
+
+        this.flyingText.flush();
+
         stage.iterateObjectLayer((value : number, x : number, y : number) : void => {
 
             const dx : number = x*16 + 8;
@@ -277,5 +286,27 @@ export class ObjectManager {
 
             o.cameraCheck(camera, event);
         }
+    }
+
+
+    public isPlayerAlive() : boolean {
+
+        // If there is no player, then there is no dead player...
+        return this.player?.doesExist() ?? true;
+    }
+
+
+    public centerTransitionToPlayer(tr : Transition, camera : Camera) : void {
+        
+        const p : Vector | undefined = this.player?.getPosition();
+        if (p === undefined) {
+
+            return;
+        }
+
+        p.x = negMod(p.x, camera.width);
+        p.y = negMod(p.y, camera.height);
+
+        tr.setCenter(p);
     }
 }

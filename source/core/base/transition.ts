@@ -43,6 +43,11 @@ export class BaseTransition implements Transition {
 
     public update(event : ProgramEvent) : void {
 
+        if (!this.isActive()) {
+
+            return;
+        }
+
         this.timer -= this.speed*event.tick;
         if (this.timer <= 0) {
 

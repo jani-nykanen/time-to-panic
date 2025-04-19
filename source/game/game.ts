@@ -7,6 +7,10 @@ import { Stage } from "./stage.js";
 import { Background } from "./background.js";
 import { GameState } from "./gamestate.js";
 import { HUD } from "./hud.js";
+import { GameOver } from "./gameover.js";
+
+
+const THEME_VOL : number = 0.60;
 
 
 export class GameScene implements Scene {
@@ -18,6 +22,7 @@ export class GameScene implements Scene {
     private camera : Camera;
     private state : GameState;
     private hud : HUD;
+    private gameover : GameOver;
 
 
     constructor(event : ProgramEvent)  {
@@ -26,7 +31,19 @@ export class GameScene implements Scene {
         this.objects = new ObjectManager(this.state);
         this.camera = new Camera(0, 0, event);
         this.background = new Background(1);
-        this.hud = new HUD(this.state);
+        this.hud = new HUD(this.state, event);
+        this.gameover = new GameOver((event : ProgramEvent) : void => this.reset(event), event);
+    }
+
+
+    private reset(event : ProgramEvent) : void {
+
+        event.audio.setMusicTrackVolume(THEME_VOL);
+
+        this.state.reset();
+        this.objects.init(this.stage, this.camera, event);
+        this.objects.initialCameraCheck(this.camera, event);
+        this.objects.centerTransitionToPlayer(event.transition, this.camera);
     }
 
 
@@ -58,6 +75,9 @@ export class GameScene implements Scene {
             event.assets.getTilemap("collisions1"));
         this.objects.init(this.stage, this.camera, event);
         this.objects.initialCameraCheck(this.camera, event);
+        this.objects.centerTransitionToPlayer(event.transition, this.camera);
+
+        event.audio.fadeInMusic(event.assets.getSample("theme"), THEME_VOL, 1000);
     }
 
 
@@ -74,6 +94,17 @@ export class GameScene implements Scene {
 
         this.state.update(event);
         this.hud.update(event);
+
+        this.gameover.update(event);
+
+        if (!this.gameover.isActive() && !this.objects.isPlayerAlive()) {
+
+            event.audio.setMusicTrackVolume(THEME_VOL/2.0);
+            this.gameover.activate();
+            this.camera.shake(0, 0);
+
+            event.audio.playSample(event.assets.getSample("gameover"), 0.60);
+        }
     }
 
 
@@ -92,6 +123,12 @@ export class GameScene implements Scene {
         this.objects.draw(canvas, assets);
 
         canvas.moveTo();
+
+        if (this.gameover.isActive()) {
+
+            this.gameover.draw(canvas, assets);
+            return;
+        }
         this.hud.draw(canvas, assets);
     }
 

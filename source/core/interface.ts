@@ -4,6 +4,7 @@ import { Vector } from "../common/vector.js";
 import { Bitmap, Canvas, Mesh } from "../gfx/interface.js";
 import { Tilemap } from "../tilemap/tilemap.js";
 import { MeshBuilder } from "../meshbuilder/meshbuilder.js";
+import { Localization } from "./base/localization.js";
 
 export const enum InputState {
 
@@ -140,6 +141,7 @@ export interface ProgramEvent {
     get scenes() : SceneManager;
     get audio() : AudioPlayer;
     get transition() : Transition;
+    get localization() : Localization | undefined;
 
     get screenWidth() : number;
     get screenHeight() : number;

@@ -108,21 +108,27 @@ export class WebAudioPlayer implements AudioPlayer {
     }
 
 
-    public setSoundVolume(vol : number) : void {
+    public setGlobalSoundVolume(vol : number) : void {
 
         this.soundVolume = clamp(vol, 0, 100);
     }
 
 
-    public setMusicVolume(vol : number) : void {
+    public setGlobalMusicVolume(vol : number) : void {
 
         this.musicVolume = clamp(vol, 0, 100);
         this.musicTrack?.changeVolume(this.musicVolume/100.0);
     }
 
 
-    public getSoundVolume = () : number => this.soundVolume;
-    public getMusicVolume = () : number => this.musicVolume;
+    public setMusicTrackVolume(vol : number) : void {
+
+        this.musicTrack?.changeVolume(vol);
+    }
+
+
+    public getGlobalSoundVolume = () : number => this.soundVolume;
+    public getGlobalMusicVolume = () : number => this.musicVolume;
 
 
     public decodeSample(sampleData : ArrayBuffer, callback : (s : AudioSample) => any) : void {

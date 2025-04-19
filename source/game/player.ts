@@ -422,6 +422,12 @@ export class Player extends CollisionObject {
         this.deathTimer += DEATH_SPEED*event.tick;
         if (this.deathTimer >= 1.0) {
 
+            // No money -> death
+            if (this.state.money <= 0) {
+
+                return true;
+            }
+
             this.initiateRespawn(event);
         }
         // Never return true

@@ -3,22 +3,24 @@ import { Align, Bitmap, Canvas } from "../gfx/interface.js";
 import { GameState } from "./gamestate.js";
 
 
-
 export class HUD {
 
 
     private state : GameState;
+    private balanceText : string = "";
 
 
-    constructor(state : GameState) {
+    constructor(state : GameState, event : ProgramEvent) {
 
         this.state = state;
+    
+        this.balanceText = event.localization?.getItem("balance")?.[0] ?? "";
     }
 
 
     public update(event : ProgramEvent) : void {
 
-        // TODO: Animations etc.
+        // Redundant
     }
 
 
@@ -33,7 +35,7 @@ export class HUD {
         canvas.setColor(0, 0, 0, 0.25);
         canvas.fillRect(0, canvas.height - 14, canvas.width, 14);
 
-        const balanceStr : string = "BALANCE: ";
+        const balanceStr : string = `${this.balanceText}: `;
         const moneyStr : string = String(Math.round(this.state.money));
         const finalMoneyStr : string = "$" + (moneyStr.length > DIGIT_COUNT ? 
             moneyStr : 
