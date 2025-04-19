@@ -98,6 +98,7 @@ export class TitleScreenScene implements Scene {
             this.spaceTimer = (this.spaceTimer + PRESS_SPACE_SPEED*event.tick) % 1.0;
             if (event.input.getAction("start") == InputState.Pressed) {
 
+                event.audio.stopMusic();
                 event.audio.playSample(event.assets.getSample("start"), 0.60);
                 event.transition.activate(true, TransitionType.Circle,
                     1.0/30.0, (event : ProgramEvent) : void => {
@@ -133,8 +134,12 @@ export class TitleScreenScene implements Scene {
         const font : Bitmap | undefined = assets.getBitmap("font_outlines");
         if (this.spaceTimer < 0.5) {
 
-            canvas.drawText(font, this.pressSpaceStr, canvas.width/2, canvas.height - 40, -8, 0, Align.Center);
+            canvas.drawText(font, this.pressSpaceStr, canvas.width/2, canvas.height - 56, -8, 0, Align.Center);
         }
+
+        canvas.setColor(219, 255, 109);
+        canvas.drawText(font, "(c) 2025 Jani Nykänen", canvas.width/2, canvas.height - 16, -8, 0, Align.Center);
+        canvas.setColor();
     }
 
 

@@ -13,6 +13,8 @@ import { PauseMenu } from "./pausemenu.js";
 
 const THEME_VOL : number = 0.60;
 
+const INITIAL_MONEY : number = 100;
+
 
 export class GameScene implements Scene {
 
@@ -31,7 +33,7 @@ export class GameScene implements Scene {
 
     constructor(event : ProgramEvent)  {
 
-        this.state = new GameState(10, 60);
+        this.state = new GameState(INITIAL_MONEY, 60);
         this.objects = new ObjectManager(this.state);
         this.camera = new Camera(0, 0, event);
         this.background = new Background(1);
