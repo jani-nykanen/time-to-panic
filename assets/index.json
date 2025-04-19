@@ -37,6 +37,10 @@
         {"name": "bounce", "path": "bounce.wav"},
         {"name": "start", "path": "start.wav"},
         {"name": "gameover", "path": "gameover.wav"},
+        {"name": "choose", "path": "choose.wav"},
+        {"name": "select", "path": "select.wav"},
+        {"name": "deny", "path": "deny.wav"},
+        {"name": "panic", "path": "panic.wav"},
 
         {"name": "theme", "path": "theme.ogg"}
     ],

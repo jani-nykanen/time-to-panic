@@ -35,7 +35,7 @@ export class Player extends CollisionObject {
     private flyingText : ObjectGenerator<FlyingText>;
     private dustTimer : number = 0;
 
-    private touchGround : boolean = false;
+    private touchGround : boolean = true;
     private ledgeTimer : number = 0;
     private jumpTimer : number = 0;
     private doubleJumping : boolean = false;

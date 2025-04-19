@@ -1,5 +1,5 @@
 import { Vector } from "../common/vector.js";
-import { Assets, ProgramEvent, Scene, SceneParameter } from "../core/interface.js";
+import { Assets, InputState, ProgramEvent, Scene, SceneParameter, TransitionType } from "../core/interface.js";
 import { Align, Bitmap, Canvas, Effect, Mesh, TransformTarget } from "../gfx/interface.js";
 import { Camera } from "./camera.js";
 import { ObjectManager } from "./objectmanager.js";
@@ -8,9 +8,10 @@ import { Background } from "./background.js";
 import { GameState } from "./gamestate.js";
 import { HUD } from "./hud.js";
 import { GameOver } from "./gameover.js";
+import { PauseMenu } from "./pausemenu.js";
 
 
-const THEME_VOL : number = 0.70;
+const THEME_VOL : number = 0.60;
 
 
 export class GameScene implements Scene {
@@ -23,6 +24,9 @@ export class GameScene implements Scene {
     private state : GameState;
     private hud : HUD;
     private gameover : GameOver;
+    private pause : PauseMenu;
+
+    private wasPanic : boolean = false;
 
 
     constructor(event : ProgramEvent)  {
@@ -33,6 +37,15 @@ export class GameScene implements Scene {
         this.background = new Background(1);
         this.hud = new HUD(this.state, event);
         this.gameover = new GameOver((event : ProgramEvent) : void => this.reset(event), event);
+
+        this.pause = new PauseMenu(event,
+            (event : ProgramEvent) : void => {
+
+                event.transition.activate(true, TransitionType.Fade, 1.0/20.0, 
+                    (event : ProgramEvent) : void => {
+                        this.reset(event)
+                    })
+            });
     }
 
 
@@ -44,6 +57,8 @@ export class GameScene implements Scene {
         this.objects.init(this.stage, this.camera, event);
         this.objects.initialCameraCheck(this.camera, event);
         this.objects.centerTransitionToPlayer(event.transition, this.camera);
+
+        this.wasPanic = false;
     }
 
 
@@ -78,6 +93,8 @@ export class GameScene implements Scene {
         this.objects.centerTransitionToPlayer(event.transition, this.camera);
 
         event.audio.fadeInMusic(event.assets.getSample("theme"), THEME_VOL, 1000);
+    
+        this.wasPanic = false;
     }
 
 
@@ -86,6 +103,32 @@ export class GameScene implements Scene {
         if (event.transition.isActive()) {
 
             return;
+        }
+
+        if (!this.gameover.isActive()) {
+
+            if (this.pause.isActive()) {
+
+                this.pause.update(event);
+                return;
+            }
+
+            if (event.input.getAction("pause") == InputState.Pressed) {
+
+                event.audio.playSample(event.assets.getSample("start"), 0.60);
+                this.pause.activate();
+                return;
+            }
+        }
+
+        if (this.state.money > 0) {
+
+            this.wasPanic = false;
+        }
+        else if (!this.wasPanic) {
+
+            event.audio.playSample(event.assets.getSample("panic"), 0.60);
+            this.wasPanic = true;
         }
 
         this.camera.update(event);
@@ -130,6 +173,8 @@ export class GameScene implements Scene {
             return;
         }
         this.hud.draw(canvas, assets);
+
+        this.pause.draw(canvas, assets);
     }
 
 

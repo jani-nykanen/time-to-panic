@@ -1,4 +1,23 @@
 {
     "balance": "BALANCE",
-    "anykey": "Press any key to retry"
+    "anykey": "Press any key to retry",
+
+    "settings": [
+        "Sound volume",
+        "Music volume",
+        "Toggle fullscreen",
+        "Back"
+    ],
+
+    "yes": "Yes",
+    "no": "No",
+
+    "pause_menu": [
+        "Resume",
+        "Restart",
+        "Settings"
+    ],
+
+
+    "restart": "Start from the\nbeginning?"
 }

@@ -3,6 +3,40 @@ import { GameScene } from "./game/game.js";
 import { BaseProgram } from "./core/base/program.js";
 import { WebAudioPlayer } from "./audio/webaudio/audioplayer.js";
 import { ProgramEvent } from "./core/interface.js";
+import { SETTINGS_LOCAL_STORAGE_KEY } from "./game/settings.js";
+import { clamp } from "./common/mathutil.js";
+
+
+const loadSettings = (event : ProgramEvent) : void => {
+
+    try {
+
+        const str : string | null = window["localStorage"]["getItem"](SETTINGS_LOCAL_STORAGE_KEY);
+        if (str === null) {
+
+            return;
+        }
+
+        const json : unknown = JSON.parse(str) ?? {};
+
+        const musicVolume : number = clamp(Number(json["musicvolume"]), 0, 100);
+        const soundVolume : number = clamp(Number(json["soundvolume"]), 0, 100);
+
+        if (window["nw"] !== undefined && json["fullscreen"] === "true") {
+
+            window["nw"]?.["Window"]?.["get"]?.()?.["toggleFullscreen"]?.();
+        }
+
+        event.audio.setGlobalMusicVolume(musicVolume);
+        event.audio.setGlobalSoundVolume(soundVolume);
+
+    }
+    catch (e) {
+
+        console.warn(`Local storage error: ${e["message"]}`);
+    }
+}
+
 
 
 const initialEvent = (event : ProgramEvent) : void => {
@@ -18,6 +52,8 @@ const initialEvent = (event : ProgramEvent) : void => {
 
     event.audio.setGlobalMusicVolume(60);
     event.audio.setGlobalSoundVolume(60);
+
+    loadSettings(event);
 }
 
 
