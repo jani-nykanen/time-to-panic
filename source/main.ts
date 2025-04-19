@@ -5,6 +5,7 @@ import { WebAudioPlayer } from "./audio/webaudio/audioplayer.js";
 import { ProgramEvent } from "./core/interface.js";
 import { SETTINGS_LOCAL_STORAGE_KEY } from "./game/settings.js";
 import { clamp } from "./common/mathutil.js";
+import { TitleScreenScene } from "./game/titlescreen.js";
 
 
 const loadSettings = (event : ProgramEvent) : void => {
@@ -38,7 +39,6 @@ const loadSettings = (event : ProgramEvent) : void => {
 }
 
 
-
 const initialEvent = (event : ProgramEvent) : void => {
 
     event.assets.parseIndexFile("assets/index.json");
@@ -66,7 +66,8 @@ const onloadEvent = (event : ProgramEvent) : void => {
         event.setActiveLocalization("en-us");
     }
 
-    event.scenes.addScene("game", new GameScene(event), true);
+    event.scenes.addScene("game", new TitleScreenScene(event), true);
+    event.scenes.addScene("game", new GameScene(event), false);
 }
 
 

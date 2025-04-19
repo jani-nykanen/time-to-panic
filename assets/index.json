@@ -42,6 +42,7 @@
         {"name": "deny", "path": "deny.wav"},
         {"name": "panic", "path": "panic.wav"},
 
+        {"name": "title", "path": "title.ogg"},
         {"name": "theme", "path": "theme.ogg"}
     ],
 
