@@ -42,6 +42,7 @@
         {"name": "select", "path": "select.wav"},
         {"name": "deny", "path": "deny.wav"},
         {"name": "panic", "path": "panic.wav"},
+        {"name": "burning_alive", "path": "burning_alive.wav"},
 
         {"name": "title", "path": "title.ogg"},
         {"name": "theme", "path": "theme.ogg"}

@@ -34,7 +34,7 @@ export class StoryScene implements Scene {
                     event.scenes.changeScene("game", event);
                 }
             )
-        })
+        });
     }
 
 

@@ -71,6 +71,10 @@ export class FinalBoss extends Enemy {
 
             if (this.pos.y > (camera?.height ?? event.screenHeight) + this.sprite.height - 8) {
 
+                camera?.shake(8, 30);
+
+                event.audio.playSample(event.assets.getSample("burning_alive"), 0.60);
+                event.audio.stopMusic();
                 event.transition.activate(true, TransitionType.Fade, 1.0/60.0, (event : ProgramEvent) => {
 
                     event.scenes.changeScene("ending", event);

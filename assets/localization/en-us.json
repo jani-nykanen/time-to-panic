@@ -30,6 +30,13 @@
     ],
 
 
+    "ending": [
+
+        "Congratulations, you have killed\nthe evil hacker by tossing his poor\nbody into a pool of lava. But if he\nwas evil, why are you in a prison?",
+        "Well, it turned out he was just an\nordinary guy who happened to own\na computer and live in a castle. No\none had hacked your bank account,\nyou were losing money because of a\nsoftware bug."
+    ],
+
+
     "hints_kb": [
 
         "Use ARROW KEYS or WASD to\nmove. Press SPACE to jump.",

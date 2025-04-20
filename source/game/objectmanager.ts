@@ -286,6 +286,8 @@ export class ObjectManager {
 
             o.cameraCheck(camera, event);
         }
+
+        this.finalBoss?.cameraCheck(camera, event);
     }
 
 
