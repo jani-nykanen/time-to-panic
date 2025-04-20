@@ -1,6 +1,7 @@
 import { Vector } from "../common/vector.js";
 import { Assets, InputState, ProgramEvent, Scene, SceneParameter, TransitionType } from "../core/interface.js";
-import { Align, Bitmap, Canvas, Effect, Mesh, TransformTarget } from "../gfx/interface.js";
+import { Align, Bitmap, Canvas, Effect, Flip, Mesh, TransformTarget } from "../gfx/interface.js";
+import { AnimatedSprite } from "../gfx/sprite.js";
 import { MeshBuilder } from "../meshbuilder/meshbuilder.js";
 
 
@@ -66,12 +67,103 @@ export class TitleScreenScene implements Scene {
     private spaceTimer : number = 0.0;
     private mode : number = 0;
 
+    private spritePlayer : AnimatedSprite;
+    private spriteGem : AnimatedSprite;
+    private playerRadiusFactor : number = 0.0;
+
 
     constructor(event : ProgramEvent)  {
 
         this.meshSpiral = createSpiralMesh(Math.PI*12, 1.25, 0.10, event);
 
         this.pressSpaceStr = event.localization?.getItem("press_space")?.[0] ?? "";
+
+        this.spritePlayer = new AnimatedSprite(24, 24);
+        this.spriteGem = new AnimatedSprite(24, 24);
+    }
+
+
+    private drawSpinningPlayer(canvas : Canvas, assets : Assets) : void {
+
+        const centerx : number = canvas.width/2;
+        const centery : number = canvas.height/2;
+
+        const radius : number = 48 + Math.sin(this.playerRadiusFactor)*16;
+
+        const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
+        const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
+
+        for (let j : number = 1; j >= 0; -- j) {
+
+            if (j == 0) {
+
+                canvas.setColor();
+            }
+            else {
+
+                canvas.setColor(0, 0, 0, 0.33);
+            }
+
+            const offset : number = j*4;
+
+            this.spritePlayer.draw(canvas, bmpPlayer, 
+                centerx + Math.sin(this.rotation)*radius - 12 + offset, 
+                centery + Math.cos(this.rotation)*radius - 12 + offset, 
+                Flip.None);
+            this.spriteGem.draw(canvas, bmpCoin,
+                centerx - Math.sin(this.rotation)*radius - 12 + offset, 
+                centery - Math.cos(this.rotation)*radius - 12 + offset, 
+                Flip.None);
+
+        }
+
+    }
+
+
+    private drawLogo(canvas : Canvas, bmp : Bitmap) : void {
+
+        canvas.beginSpriteBatching(bmp);
+        canvas.drawVerticallyWavingBitmap(bmp, 
+            0, 0, 0, 0, bmp.width, bmp.height,
+            Math.PI*4, 6.0, this.rotation);
+        canvas.endSpriteBatching();
+
+        const dx : number = canvas.width/2 - bmp.width/2;
+        const dy : number = 8;
+
+        canvas.applyEffect(Effect.FixedColor);
+
+        // White outlines
+        canvas.setColor();
+        for (let j : number = -2; j <= 2; ++ j) {
+
+            for (let i : number = -2; i <= 2; ++ i) {
+
+                if ((Math.abs(i) != 2 && Math.abs(j) != 2) ) {
+
+                    continue;
+                }
+                canvas.drawSpriteBatch(dx + i, dy + j);
+            }
+        }
+
+        // Black outlines
+        canvas.setColor(0, 0, 0);
+        for (let j : number = -1; j <= 1; ++ j) {
+
+            for (let i : number = -1; i <= 1; ++ i) {
+
+                if (i == 0 && j == 0) {
+
+                    continue;
+                }
+                canvas.drawSpriteBatch(dx + i, dy + j);
+            }
+        }
+
+        canvas.applyEffect(Effect.None);
+        canvas.setColor();
+        canvas.drawSpriteBatch(canvas.width/2 - bmp.width/2, 8);
     }
 
 
@@ -84,9 +176,14 @@ export class TitleScreenScene implements Scene {
     public update(event : ProgramEvent) : void {
 
         const ROTATION_SPEED : number = Math.PI*2/120.0;
+        const PLAYER_ROT_SPEED : number = Math.PI*2/210;
         const PRESS_SPACE_SPEED : number = 1.0/60.0;
 
+        this.spritePlayer.animate(2, 0, 7, 4, event.tick);
+        this.spriteGem.animate(1, 0, 3, 8, event.tick);
+
         this.rotation = (this.rotation + ROTATION_SPEED*event.tick) % (Math.PI*2);
+        this.playerRadiusFactor = (this.playerRadiusFactor + PLAYER_ROT_SPEED*event.tick) % (Math.PI*2);
 
         if (event.transition.isActive()) {
 
@@ -132,6 +229,8 @@ export class TitleScreenScene implements Scene {
         canvas.transform.apply();
         canvas.setColor();
 
+        this.drawSpinningPlayer(canvas, assets);
+
         const font : Bitmap | undefined = assets.getBitmap("font_outlines");
         if (this.spaceTimer < 0.5) {
 
@@ -141,6 +240,12 @@ export class TitleScreenScene implements Scene {
         canvas.setColor(219, 255, 109);
         canvas.drawText(font, "(c) 2025 Jani Nykänen", canvas.width/2, canvas.height - 16, -8, 0, Align.Center);
         canvas.setColor();
+
+        const bmpLogo : Bitmap | undefined = assets.getBitmap("logo");
+        if (bmpLogo !== undefined) {
+
+            this.drawLogo(canvas, bmpLogo);
+        }
     }
 
 

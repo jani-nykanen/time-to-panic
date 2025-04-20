@@ -13,6 +13,7 @@
         {"name": "final_boss", "path": "final_boss.png"},
         {"name": "gameover", "path": "gameover.png"},
         {"name": "panic", "path": "panic.png"},
+        {"name": "logo", "path": "logo.png"},
         
         {"name": "background1", "path": "background1.png"},
         {"name": "tileset1", "path": "tileset1.png"},
