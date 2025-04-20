@@ -9,6 +9,7 @@ import { GameState } from "./gamestate.js";
 import { HUD } from "./hud.js";
 import { GameOver } from "./gameover.js";
 import { PauseMenu } from "./pausemenu.js";
+import { Hints } from "./hints.js";
 
 
 const THEME_VOL : number = 0.60;
@@ -27,12 +28,15 @@ export class GameScene implements Scene {
     private hud : HUD;
     private gameover : GameOver;
     private pause : PauseMenu;
+    private hints : Hints;
 
+    private transitionShown : boolean = false;
     private wasPanic : boolean = false;
 
 
     constructor(event : ProgramEvent)  {
 
+        this.hints = new Hints(event);
         this.state = new GameState(INITIAL_MONEY, 60);
         this.objects = new ObjectManager(this.state);
         this.camera = new Camera(0, 0, event);
@@ -102,7 +106,10 @@ export class GameScene implements Scene {
 
     public update(event : ProgramEvent) : void {
 
-        if (event.transition.isActive()) {
+        this.hints.update(event);
+
+        this.transitionShown = event.transition.isActive();
+        if (this.transitionShown) {
 
             return;
         }
@@ -117,6 +124,7 @@ export class GameScene implements Scene {
 
             if (event.input.getAction("pause") == InputState.Pressed) {
 
+                event.audio.pauseMusic();
                 event.audio.playSample(event.assets.getSample("start"), 0.60);
                 this.pause.activate();
                 return;
@@ -133,9 +141,14 @@ export class GameScene implements Scene {
             this.wasPanic = true;
         }
 
+        const wasCameraMoving : boolean = this.camera.isMoving();
         this.camera.update(event);
         this.stage?.update(event);
         this.objects.update(this.stage, this.camera, event);
+        if (!wasCameraMoving && this.camera.isMoving()) {
+            
+            this.hints.nextHint();
+        }
 
         this.state.update(event);
         this.hud.update(event);
@@ -161,9 +174,7 @@ export class GameScene implements Scene {
         this.background.draw(canvas, assets, this.camera);
 
         this.camera.apply(canvas, true);
-
         this.drawShadowLayer(canvas, assets);
-        
         this.stage?.draw(canvas, assets, this.camera);
         this.objects.draw(canvas, assets);
 
@@ -175,8 +186,14 @@ export class GameScene implements Scene {
             return;
         }
         this.hud.draw(canvas, assets);
-
         this.pause.draw(canvas, assets);
+
+        if (!this.transitionShown &&
+            !this.pause.isActive() && 
+            !this.camera.isMoving()) {
+
+            this.hints.drawHint(canvas, assets);
+        }
     }
 
 

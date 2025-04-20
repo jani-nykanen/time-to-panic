@@ -11,7 +11,7 @@ import { GameObject } from "./gameobject.js";
 import { Player } from "./player.js";
 
 
-const MONEY_BONUS : number[] = [5, 10];
+const MONEY_BONUS : number[] = [5, 15];
 const SAMPLE_NAME : string[] = ["coin", "gem"];
 const SAMPLE_VOLUMES : number[] = [0.65, 0.60];
 

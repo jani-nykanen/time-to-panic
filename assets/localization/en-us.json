@@ -22,6 +22,22 @@
     "restart": "Start from the\nbeginning?",
 
 
-    "press_space": "Press SPACE or \u0080 to start"
+    "press_space": "Press SPACE or \u0080 to start",
 
+
+    "story": [
+        "Oh no, your bank account has been\nhacked by an evil hacker! With his\nmagical software, he is slowly\nstealing all your precious money.\nYou must stop him before it is too\nlate!"
+    ],
+
+
+    "hints_kb": [
+
+        "Use ARROW KEYS or WASD to\nmove. Press SPACE to jump.",
+        "Jump in the air to perform\na DOUBLE JUMP."
+    ],
+    "hints_gp": [
+
+        "Use ANALOGUE STICK or DPAD\nto move. Press \u0080 to jump.",
+        "Jump in the air to perform\na DOUBLE JUMP."
+    ]
 }

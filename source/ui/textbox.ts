@@ -22,8 +22,6 @@ export class TextBox {
 
     private waitWave : number = 0;
 
-    private portraitID : number | null = null;
-
     private finishEvent : ((event : ProgramEvent) => void) | undefined = undefined;
     
 
@@ -62,6 +60,8 @@ export class TextBox {
         const dx : number = x; 
         const dy : number = y + Math.round(Math.sin(this.waitWave)*AMPLITUDE);
 
+        canvas.setColor();
+        canvas.fillRect(dx - 1, dy - 1, WIDTH + 2, HEIGHT + 2);
         canvas.setColor(0, 0, 0);
         canvas.fillRect(dx, dy, WIDTH, HEIGHT);
         canvas.setColor(255, 255, 73);
@@ -93,10 +93,8 @@ export class TextBox {
     }
 
 
-    public activate(instant : boolean = false, portraitID : number | null = null,
-        finishEvent : ((event : ProgramEvent) => void) | undefined = undefined) : void {
-
-        this.portraitID = portraitID;
+    public activate(instant : boolean = false,
+        finishEvent? : (event : ProgramEvent) => void) : void {
 
         if (this.textBuffer.length == 0) {
 
@@ -131,6 +129,7 @@ export class TextBox {
     public update(event : ProgramEvent) : void {
 
         const WAIT_WAVE_SPEED : number = Math.PI*2/60;
+        // TODO: Pass as a parameter
         const CHAR_WAIT_TIME : number = 3;
 
         if (!this.active || this.activeText === undefined)
@@ -196,7 +195,7 @@ export class TextBox {
 
 
     public draw(canvas : Canvas, assets : Assets, 
-        x : number = 0, y : number = 0, yoff : number = 2, 
+        x : number = 0, y : number = 0, yoff : number = -4, 
         drawBox : boolean = true, drawIcon : boolean = true,
         boxColors : RGBA[] | undefined = undefined,
         drawShadow : boolean = true, shadowAlpha : number = 0.25, 
@@ -204,19 +203,19 @@ export class TextBox {
 
         const BOX_OFFSET : number = 2;
         const SIDE_OFFSET : number = 2;
+        const CHAR_OFFSET : number = -8;
 
         if (!this.active) {
             
             return;
         }
 
-        const font : Bitmap | undefined  = assets.getBitmap("font");
-        const bmpPortraits : Bitmap | undefined = assets.getBitmap("portraits");
-
+        const font : Bitmap | undefined  = assets.getBitmap("font_outlines");
         const charDim : number = (font?.width ?? 128)/16;
 
-        const w : number = (this.width*charDim + SIDE_OFFSET*2);
-        const h : number = this.height*(charDim + yoff) + SIDE_OFFSET*2;
+
+        const w : number = ((this.width + 1)*(charDim + CHAR_OFFSET) + SIDE_OFFSET*2);
+        const h : number = (this.height + 0.5)*(charDim + yoff) + SIDE_OFFSET*2;
 
         let dx : number = x + canvas.width/2 - w/2;
         const dy : number = y + canvas.height/2 - h/2; 
@@ -229,30 +228,12 @@ export class TextBox {
                 boxColors, drawShadow, shadowAlpha, shadowOffset);
         }
 
-        // Store this before modifying dx further, since the icon
-        // should be drawn last
-        const iconPosX : number = dx + w - 3; 
-
-        const ph : number = bmpPortraits?.height ?? 0;
-        if (this.portraitID !== null) {
-
-            canvas.setColor(0, 0, 0, 0.5);
-            canvas.fillRect(dx + 4, dy + h/2 - ph/2, 48, 48);
-            canvas.setColor();
-
-            canvas.drawBitmap(bmpPortraits, Flip.None, 
-                dx + 4, dy + h/2 - ph/2, this.portraitID*ph, 0, ph, ph);
-        }
-
-        const textAreaShift : number = this.portraitID === null ? 0 : ph + 8;
-        dx += textAreaShift;
-
         const str : string = this.activeText?.substring(0, this.charPos) ?? "";
-        canvas.drawText(font, str, dx + SIDE_OFFSET, dy + SIDE_OFFSET, 0, yoff);
+        canvas.drawText(font, str, dx + SIDE_OFFSET, dy + SIDE_OFFSET, CHAR_OFFSET, yoff);
 
         if (this.finished && drawIcon) {
 
-            this.drawIcon(canvas, iconPosX, dy + h - 3);
+            this.drawIcon(canvas, dx + w - 3, dy + h - 3);
         }
     }
 

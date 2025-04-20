@@ -103,7 +103,8 @@ export class TitleScreenScene implements Scene {
                 event.transition.activate(true, TransitionType.Circle,
                     1.0/30.0, (event : ProgramEvent) : void => {
 
-                        event.scenes.changeScene("game", event);
+                        event.transition.activate(false, TransitionType.Fade, 1.0/30.0);
+                        event.scenes.changeScene("story", event);
                     });
             }
         }

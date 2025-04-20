@@ -31,7 +31,7 @@ export class PauseMenu {
             new MenuButton(menuText[0] ?? "null",
             (event : ProgramEvent) => {
     
-                // event.audio.resumeMusic();
+                event.audio.resumeMusic();
                 this.deactivate();
                 // resumeEvent(event);
             }),
@@ -90,7 +90,7 @@ export class PauseMenu {
 
         if (event.input.getAction("back") == InputState.Pressed) {
 
-            // event.audio.resumeMusic();
+            event.audio.resumeMusic();
             this.deactivate();
             event.audio.playSample(event.assets.getSample("deny"), 0.70);
 

@@ -6,6 +6,7 @@ import { ProgramEvent } from "./core/interface.js";
 import { SETTINGS_LOCAL_STORAGE_KEY } from "./game/settings.js";
 import { clamp } from "./common/mathutil.js";
 import { TitleScreenScene } from "./game/titlescreen.js";
+import { StoryScene } from "./game/story.js";
 
 
 const loadSettings = (event : ProgramEvent) : void => {
@@ -66,7 +67,8 @@ const onloadEvent = (event : ProgramEvent) : void => {
         event.setActiveLocalization("en-us");
     }
 
-    event.scenes.addScene("game", new TitleScreenScene(event), true);
+    event.scenes.addScene("titlescreen", new TitleScreenScene(event), true);
+    event.scenes.addScene("story", new StoryScene(event), false);
     event.scenes.addScene("game", new GameScene(event), false);
 }
 
