@@ -41,7 +41,6 @@ const createSpiralMesh = (baseFactor : number, radius : number, thicknessFactor 
         const C : Vector = Vector.add(nextPoint, nextNormal);
         const D : Vector = Vector.add(lastPoint, lastNormal);
         
-        const j : number = i*6;
         builder.append(
             [A.x, A.y, 0.0, 
              B.x, B.y, 0.0, 
@@ -65,7 +64,6 @@ export class TitleScreenScene implements Scene {
 
     private pressSpaceStr : string = "";
     private spaceTimer : number = 0.0;
-    private mode : number = 0;
 
     private spritePlayer : AnimatedSprite;
     private spriteGem : AnimatedSprite;
@@ -169,6 +167,7 @@ export class TitleScreenScene implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
+        this.spaceTimer = 1.0;
         event.audio.fadeInMusic(event.assets.getSample("title"), TITLE_THEME_VOL);
     }
 
@@ -190,21 +189,20 @@ export class TitleScreenScene implements Scene {
             return;
         }
 
-        if (this.mode == 0) {
 
-            this.spaceTimer = (this.spaceTimer + PRESS_SPACE_SPEED*event.tick) % 1.0;
-            if (event.input.getAction("start") == InputState.Pressed) {
+        this.spaceTimer = (this.spaceTimer + PRESS_SPACE_SPEED*event.tick) % 1.0;
+        if (event.input.getAction("start") == InputState.Pressed) {
 
-                event.audio.stopMusic();
-                event.audio.playSample(event.assets.getSample("start"), 0.60);
-                event.transition.activate(true, TransitionType.Circle,
-                    1.0/30.0, (event : ProgramEvent) : void => {
+            event.audio.stopMusic();
+            event.audio.playSample(event.assets.getSample("start"), 0.60);
+            event.transition.activate(true, TransitionType.Circle,
+                1.0/30.0, (event : ProgramEvent) : void => {
 
-                        event.transition.activate(false, TransitionType.Fade, 1.0/30.0);
-                        event.scenes.changeScene("story", event);
-                    });
-            }
+                    event.transition.activate(false, TransitionType.Fade, 1.0/30.0);
+                    event.scenes.changeScene("story", event);
+                });
         }
+        
     }
 
 

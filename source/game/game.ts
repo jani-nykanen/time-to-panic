@@ -12,7 +12,7 @@ import { PauseMenu } from "./pausemenu.js";
 import { Hints } from "./hints.js";
 
 
-const THEME_VOL : number = 0.60;
+const THEME_VOL : number = 0.65;
 
 const INITIAL_MONEY : number = 100;
 
@@ -49,6 +49,7 @@ export class GameScene implements Scene {
 
                 event.transition.activate(true, TransitionType.Fade, 1.0/20.0, 
                     (event : ProgramEvent) : void => {
+                        event.audio.resumeMusic();
                         this.reset(event)
                     })
             });
@@ -59,6 +60,7 @@ export class GameScene implements Scene {
 
         event.audio.setMusicTrackVolume(THEME_VOL);
 
+        this.hints.reset();
         this.state.reset();
         this.objects.init(this.stage, this.camera, event);
         this.objects.initialCameraCheck(this.camera, event);

@@ -92,4 +92,16 @@ export class Hints {
         canvas.drawText(bmpFont, activeHint, dx, dy, -8, CHAR_YOFF, Align.Left);
         canvas.setColor();
     }
+
+
+    public reset() : void {
+
+        this.activeHint = 0;
+        this.hintsLeft = true;
+
+        for (let i : number = 0; i < this.hintsShown.length; ++ i) {
+
+            this.hintsShown[i] = false;
+        }
+    }
 }

@@ -32,8 +32,10 @@
 
     "ending": [
 
-        "Congratulations, you have killed\nthe evil hacker by tossing his poor\nbody into a pool of lava. But if he\nwas evil, why are you in a prison?",
-        "Well, it turned out he was just an\nordinary guy who happened to own\na computer and live in a castle. No\none had hacked your bank account,\nyou were losing money because of a\nsoftware bug."
+        "Congratulations, you have\nkilled the evil hacker by\ntossing his poor body into\na pool of lava.",
+        "However, it turned out he\nwas just an ordinary guy\nwho happened to own a\ncomputer and live in a\ndark castle.",
+        "You were losing money\nbecause of a software\nbug, not because of\nmischief.",
+        "Oh well, we all make\nmistakes sometimes!"
     ],
 
 

@@ -23,18 +23,6 @@ export class StoryScene implements Scene {
         this.spritePlayer = new AnimatedSprite(24, 24);
 
         this.text = new TextBox();
-    
-        this.text.addText(event.localization?.getItem("story") ?? []);
-        this.text.activate(false, (event : ProgramEvent) : void => {
-
-            event.transition.activate(true, TransitionType.Fade, 1.0/30.0,
-                (event : ProgramEvent) : void => {
-
-                    event.transition.activate(false, TransitionType.Circle, 1.0/30.0);
-                    event.scenes.changeScene("game", event);
-                }
-            )
-        });
     }
 
 
@@ -60,7 +48,17 @@ export class StoryScene implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
-        // ...
+        this.text.addText(event.localization?.getItem("story") ?? []);
+        this.text.activate(false, (event : ProgramEvent) : void => {
+
+            event.transition.activate(true, TransitionType.Fade, 1.0/30.0,
+                (event : ProgramEvent) : void => {
+
+                    event.transition.activate(false, TransitionType.Circle, 1.0/30.0);
+                    event.scenes.changeScene("game", event);
+                }
+            )
+        });
     }
 
 
