@@ -88,7 +88,7 @@ export class TitleScreenScene implements Scene {
         const centerx : number = canvas.width/2;
         const centery : number = canvas.height/2;
 
-        const radius : number = 48 + Math.sin(this.playerRadiusFactor)*16;
+        const radius : number = 40 + Math.sin(this.playerRadiusFactor)*20;
 
         const bmpPlayer : Bitmap | undefined = assets.getBitmap("player");
         const bmpCoin : Bitmap | undefined = assets.getBitmap("coin");
