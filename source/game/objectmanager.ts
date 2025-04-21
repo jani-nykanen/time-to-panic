@@ -19,6 +19,14 @@ import { Vector } from "../common/vector.js";
 import { negMod } from "../common/mathutil.js";
 
 
+const SPRING_LOOKUP : Direction[] = [
+    Direction.Up, 
+    Direction.None, Direction.None, 
+    Direction.Right, Direction.Left, Direction.Down]; 
+
+const ENEMY_START_INDEX : number = 33;
+
+
 export class ObjectManager {
 
 
@@ -145,19 +153,12 @@ export class ObjectManager {
         this.drawSpecialColliders(canvas, assets);
         this.drawCoins(canvas, assets, shadowLayer);
         this.drawEnemies(canvas, assets, shadowLayer);
-        this.finalBoss.draw(canvas, assets, undefined, shadowLayer);
+        this.finalBoss?.draw(canvas, assets, undefined, shadowLayer);
         this.player?.draw(canvas, assets, undefined, shadowLayer);
     }
 
 
     public init(stage : Stage | undefined, camera : Camera, event : ProgramEvent) : void {
-
-        const SPRING_LOOKUP : Direction[] = [
-            Direction.Up, 
-            Direction.None, Direction.None, 
-            Direction.Right, Direction.Left, Direction.Down]; 
-
-        const ENEMY_START_INDEX : number = 33;
 
         this.player = undefined;
         this.coins = new Array<Coin> ();
@@ -166,7 +167,50 @@ export class ObjectManager {
 
         this.flyingText.flush();
 
-        stage.iterateObjectLayer((value : number, x : number, y : number) : void => {
+        this.createObjectsInCameraTarget(stage, camera);
+    }
+
+
+    public update(stage : Stage | undefined, camera : Camera, event : ProgramEvent) : void {
+
+        const cameraMoving : boolean = camera.isMoving();
+
+        this.player?.update(camera, event);
+        this.player?.cameraCheck(camera, event);
+        if (!cameraMoving && camera.isMoving()) {
+
+            this.createObjectsInCameraTarget(stage, camera);
+        }
+
+        this.player?.stageEvent(camera, stage, event);
+        stage?.objectCollision(this.player, camera, event);
+    
+        this.finalBoss?.update(camera, event);
+        this.finalBoss?.cameraCheck(camera, event);
+        this.finalBoss?.playerCollision(this.player!, event);
+        if (this.finalBoss !== undefined) {
+        
+            stage.objectCollision(this.finalBoss, camera, event);
+        }
+
+        this.updateCoins(camera, event);
+        this.updateEnemies(stage, camera, event);
+        this.updateSpecialColliders(stage, camera, event);
+        this.flyingText.update(camera, event);
+    }
+
+    
+    public createObjectsInCameraTarget(stage : Stage | undefined, camera : Camera) : void {
+
+        const tpos : Vector = camera.targetPosition;
+
+        const startx : number = Math.floor(tpos.x/16);
+        const starty : number = Math.floor(tpos.y/16);
+
+        const endx : number = startx + Math.floor(camera.width/16);
+        const endy : number = starty + Math.floor(camera.height/16);
+
+        stage?.iterateObjectLayer((value : number, x : number, y : number) : void => {
 
             const dx : number = x*16 + 8;
             const dy : number = y*16 + 8;
@@ -227,29 +271,7 @@ export class ObjectManager {
                 break;
             }
 
-        });
-    }
-
-
-    public update(stage : Stage | undefined, camera : Camera, event : ProgramEvent) : void {
-
-        this.player?.update(camera, event);
-        this.player?.cameraCheck(camera, event);
-        this.player?.stageEvent(camera, stage, event);
-        stage?.objectCollision(this.player, camera, event);
-    
-        this.finalBoss?.update(camera, event);
-        this.finalBoss?.cameraCheck(camera, event);
-        this.finalBoss?.playerCollision(this.player!, event);
-        if (this.finalBoss !== undefined) {
-        
-            stage.objectCollision(this.finalBoss, camera, event);
-        }
-
-        this.updateCoins(camera, event);
-        this.updateEnemies(stage, camera, event);
-        this.updateSpecialColliders(stage, camera, event);
-        this.flyingText.update(camera, event);
+        }, startx, starty, endx, endy);
     }
 
 

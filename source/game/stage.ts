@@ -83,13 +83,15 @@ export class Stage {
     }
 
 
-    public iterateObjectLayer(event : (value : number, x : number, y : number) => void) : void {
+    public iterateObjectLayer(event : (value : number, x : number, y : number) => void,
+        startx : number = 0, starty : number = 0, 
+        endx : number = this.width, endy : number = this.height) : void {
 
         const objectLayer : number[] = this.baseMap.cloneLayer("objects");
 
-        for (let y : number = 0; y < this.height; ++ y) {
+        for (let y : number = starty; y < endy; ++ y) {
 
-            for (let x : number = 0; x < this.width; ++ x) {
+            for (let x : number = startx; x < endx; ++ x) {
                 
                 const value : number = objectLayer[y*this.width + x] ?? 256;
 

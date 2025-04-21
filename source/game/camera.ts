@@ -35,6 +35,11 @@ export class Camera {
 
         return this.pos.clone();
     }
+    public get targetPosition() : Vector {
+
+        return this.target.clone();
+    }
+
 
     constructor(x : number = 0, y : number = 0, event : ProgramEvent) {
 
@@ -171,5 +176,17 @@ export class Camera {
         this.pos.y = Math.floor((target.y)/this.height)*this.height;
 
         this.target = this.pos.clone();
+    }
+
+
+    public reset() : void {
+
+        this.moving = false;
+        this.moveTimer = 0.0;
+        
+        this.pos.zero()
+        this.startPos.zero();
+        this.target.zero()
+        this.moveDirection.zero()
     }
 }

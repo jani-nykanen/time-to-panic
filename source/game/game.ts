@@ -60,6 +60,8 @@ export class GameScene implements Scene {
 
         event.audio.setMusicTrackVolume(THEME_VOL);
 
+        this.camera.reset();
+
         this.hints.reset();
         this.state.reset();
         this.objects.init(this.stage, this.camera, event);
@@ -94,6 +96,8 @@ export class GameScene implements Scene {
 
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
+
+        this.camera.reset();
 
         this.stage = new Stage(
             event.assets.getTilemap("level1"),
