@@ -95,13 +95,11 @@ export class ObjectManager {
             o.update(camera, event);
             stage?.objectCollision(o, camera, event);
             o.playerCollision?.(this.player!, camera, event);
-
-            /*
+  
             if (!o.doesExist()) {
 
-                this.enemies.splice(i, 1);
+                this.specialColliders.splice(i, 1);
             }
-            */
         }
     }
 

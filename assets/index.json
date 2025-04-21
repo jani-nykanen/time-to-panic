@@ -15,7 +15,10 @@
         {"name": "panic", "path": "panic.png"},
         {"name": "logo", "path": "logo.png"},
         {"name": "the_end", "path": "the_end.png"},
-        
+
+        {"name": "intro", "path": "intro.png"},
+        {"name": "avatar", "path": "avatar.png"},
+
         {"name": "background1", "path": "background1.png"},
         {"name": "tileset1", "path": "tileset1.png"},
 

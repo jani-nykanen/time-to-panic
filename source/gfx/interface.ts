@@ -76,6 +76,8 @@ export interface Transform {
     push() : void;
     pop() : void;
 
+    setDefault2DView(width : number, height : number) : void;
+
     apply() : void;
 }
 

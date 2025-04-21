@@ -22,7 +22,7 @@ export class StoryScene implements Scene {
         this.spriteFinalboss = new AnimatedSprite(64, 64);
         this.spritePlayer = new AnimatedSprite(24, 24);
 
-        this.text = new TextBox();
+        this.text = new TextBox(true, 31, 5);
     }
 
 

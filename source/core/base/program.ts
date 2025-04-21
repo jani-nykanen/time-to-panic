@@ -27,24 +27,6 @@ export class BaseProgram implements Program {
     }
 
 
-    private setDefaultTransform(canvas : Canvas) : void {
-
-        // Why is this here?
-        canvas.setColor();
-
-        canvas.transform.setTarget(TransformTarget.Camera);
-        canvas.transform.view2D(canvas.width, canvas.height);
-
-        canvas.transform.setTarget(TransformTarget.Model);
-        canvas.transform.loadIdentity();
-
-        canvas.transform.setTarget(TransformTarget.Projection);
-        canvas.transform.loadIdentity();
-
-        canvas.transform.apply();
-    }
-
-
     private checkDefaultKeyShortcuts() : void {
 
         // nw.js only
@@ -126,7 +108,7 @@ export class BaseProgram implements Program {
             
             this.renderer.drawToCanvas((canvas : Canvas) : void => {
 
-                this.setDefaultTransform(canvas);
+                canvas.transform.setDefault2DView(canvas.width, canvas.height);
                 canvas.flushSpriteBatch();
 
                 if (loaded) {
@@ -140,7 +122,7 @@ export class BaseProgram implements Program {
                     this.drawLoadingScreen(canvas);
                 }
 
-                this.setDefaultTransform(canvas);
+                canvas.transform.setDefault2DView(canvas.width, canvas.height);
                 this.event.drawCursor(canvas);
             });
             this.renderer.refresh();

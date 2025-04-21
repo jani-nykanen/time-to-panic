@@ -236,6 +236,21 @@ export class WebGLTransform implements Transform {
         this.productComputed = false;
     }
 
+
+    public setDefault2DView(width : number, height : number) : void {
+
+        this.setTarget(TransformTarget.Camera);
+        this.view2D(width, height);
+
+        this.setTarget(TransformTarget.Model);
+        this.loadIdentity();
+
+        this.setTarget(TransformTarget.Projection);
+        this.loadIdentity();
+
+        this.apply();
+    }
+
     
     public apply() : void {
 

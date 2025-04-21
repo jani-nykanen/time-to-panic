@@ -69,6 +69,15 @@ export class Coin extends GameObject {
     }
 
 
+    protected cameraEvent(enteredCamera : boolean, camera : Camera, event : ProgramEvent) : void {
+        
+        if (!this.inCamera && camera.position.x > this.pos.x) {
+
+            this.exist = false;
+        }
+    }
+
+
     public playerCollision(player : Player, event : ProgramEvent) : void {
 
         if (!this.isActive()) {

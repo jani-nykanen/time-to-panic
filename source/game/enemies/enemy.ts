@@ -105,6 +105,15 @@ export class Enemy extends CollisionObject {
     protected updateAI?(event : ProgramEvent, camera? : Camera) : void;
 
 
+    protected cameraEvent(enteredCamera : boolean, camera : Camera, event : ProgramEvent) : void {
+        
+        if (!this.inCamera && camera.position.x > this.pos.x) {
+
+            this.exist = false;
+        }
+    }
+
+
     protected verticalCollisionEvent(dir : -1 | 1, event : ProgramEvent) : void {
         
         if (dir == 1) {

@@ -69,6 +69,8 @@ export class TitleScreenScene implements Scene {
     private spriteGem : AnimatedSprite;
     private playerRadiusFactor : number = 0.0;
 
+    private logoYOffset : number = 0;
+
 
     constructor(event : ProgramEvent)  {
 
@@ -114,11 +116,12 @@ export class TitleScreenScene implements Scene {
                 Flip.None);
 
         }
-
     }
 
 
     private drawLogo(canvas : Canvas, bmp : Bitmap) : void {
+
+        const BASE_Y_OFF : number = -128;
 
         canvas.beginSpriteBatching(bmp);
         canvas.drawVerticallyWavingBitmap(bmp, 
@@ -127,7 +130,7 @@ export class TitleScreenScene implements Scene {
         canvas.endSpriteBatching();
 
         const dx : number = canvas.width/2 - bmp.width/2;
-        const dy : number = 8;
+        const dy : number = 8 + BASE_Y_OFF*this.logoYOffset;
 
         canvas.applyEffect(Effect.FixedColor);
 
@@ -161,7 +164,7 @@ export class TitleScreenScene implements Scene {
 
         canvas.applyEffect(Effect.None);
         canvas.setColor();
-        canvas.drawSpriteBatch(canvas.width/2 - bmp.width/2, 8);
+        canvas.drawSpriteBatch(dx, dy);
     }
 
 
@@ -184,11 +187,15 @@ export class TitleScreenScene implements Scene {
         this.rotation = (this.rotation + ROTATION_SPEED*event.tick) % (Math.PI*2);
         this.playerRadiusFactor = (this.playerRadiusFactor + PLAYER_ROT_SPEED*event.tick) % (Math.PI*2);
 
+        this.logoYOffset = 0.0;
         if (event.transition.isActive()) {
 
+            if (!event.transition.isFadingOut()) {
+
+                this.logoYOffset = event.transition.getTimer();
+            }
             return;
         }
-
 
         this.spaceTimer = (this.spaceTimer + PRESS_SPACE_SPEED*event.tick) % 1.0;
         if (event.input.getAction("start") == InputState.Pressed) {

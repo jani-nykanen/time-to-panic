@@ -66,6 +66,8 @@ export class GameScene implements Scene {
         this.objects.initialCameraCheck(this.camera, event);
         this.objects.centerTransitionToPlayer(event.transition, this.camera);
 
+        this.camera.shake(0, 0);
+
         this.wasPanic = false;
     }
 
@@ -99,6 +101,8 @@ export class GameScene implements Scene {
         this.objects.init(this.stage, this.camera, event);
         this.objects.initialCameraCheck(this.camera, event);
         this.objects.centerTransitionToPlayer(event.transition, this.camera);
+
+        this.camera.shake(0, 0);
 
         event.audio.fadeInMusic(event.assets.getSample("theme"), THEME_VOL, 1000);
     
