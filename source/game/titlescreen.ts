@@ -122,15 +122,16 @@ export class TitleScreenScene implements Scene {
     private drawLogo(canvas : Canvas, bmp : Bitmap) : void {
 
         const BASE_Y_OFF : number = -128;
+        const AMPLITUDE : number = 4.0;
 
         canvas.beginSpriteBatching(bmp);
         canvas.drawVerticallyWavingBitmap(bmp, 
             0, 0, 0, 0, bmp.width, bmp.height,
-            Math.PI*4, 6.0, this.rotation);
+            Math.PI*4, AMPLITUDE, this.rotation);
         canvas.endSpriteBatching();
 
         const dx : number = canvas.width/2 - bmp.width/2;
-        const dy : number = 8 + BASE_Y_OFF*this.logoYOffset;
+        const dy : number = 16 + BASE_Y_OFF*this.logoYOffset;
 
         canvas.applyEffect(Effect.FixedColor);
 
