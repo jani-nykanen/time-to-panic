@@ -131,7 +131,7 @@ export class TitleScreenScene implements Scene {
         canvas.endSpriteBatching();
 
         const dx : number = canvas.width/2 - bmp.width/2;
-        const dy : number = 16 + BASE_Y_OFF*this.logoYOffset;
+        const dy : number = 8 + BASE_Y_OFF*this.logoYOffset;
 
         canvas.applyEffect(Effect.FixedColor);
 
