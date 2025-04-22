@@ -369,9 +369,9 @@ export class Player extends CollisionObject {
 
         const camPos : Vector = camera.position;
 
-        this.horizontalCollision(camPos.x, 0, camera.height, -1, event);
+        this.horizontalCollision(camPos.x, -1024, camera.height + 2048, -1, event);
         
-        if (this.horizontalCollision(camPos.x + camera.width, 0, camera.height, 1, event)) {
+        if (this.horizontalCollision(camPos.x + camera.width, -1024, camera.height + 2048, 1, event)) {
 
             camera.move(1, 0);
             this.speed.zero();
