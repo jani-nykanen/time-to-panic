@@ -97,6 +97,7 @@ export class GameScene implements Scene {
 
     public init(param : SceneParameter, event : ProgramEvent) : void {
 
+        this.state.reset();
         this.camera.reset();
 
         this.stage = new Stage(
